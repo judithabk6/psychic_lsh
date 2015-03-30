@@ -14,6 +14,156 @@
 
 
 
+Node::~Node() throw() {
+}
+
+
+void Node::__set_labels(const std::vector<int32_t> & val) {
+  this->labels = val;
+}
+
+void Node::__set_position(const std::vector<double> & val) {
+  this->position = val;
+}
+
+const char* Node::ascii_fingerprint = "A2801F02B81B73CF35BAC5309B029DC3";
+const uint8_t Node::binary_fingerprint[16] = {0xA2,0x80,0x1F,0x02,0xB8,0x1B,0x73,0xCF,0x35,0xBA,0xC5,0x30,0x9B,0x02,0x9D,0xC3};
+
+uint32_t Node::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_LIST) {
+          {
+            this->labels.clear();
+            uint32_t _size0;
+            ::apache::thrift::protocol::TType _etype3;
+            xfer += iprot->readListBegin(_etype3, _size0);
+            this->labels.resize(_size0);
+            uint32_t _i4;
+            for (_i4 = 0; _i4 < _size0; ++_i4)
+            {
+              xfer += iprot->readI32(this->labels[_i4]);
+            }
+            xfer += iprot->readListEnd();
+          }
+          this->__isset.labels = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_LIST) {
+          {
+            this->position.clear();
+            uint32_t _size5;
+            ::apache::thrift::protocol::TType _etype8;
+            xfer += iprot->readListBegin(_etype8, _size5);
+            this->position.resize(_size5);
+            uint32_t _i9;
+            for (_i9 = 0; _i9 < _size5; ++_i9)
+            {
+              xfer += iprot->readDouble(this->position[_i9]);
+            }
+            xfer += iprot->readListEnd();
+          }
+          this->__isset.position = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t Node::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  oprot->incrementRecursionDepth();
+  xfer += oprot->writeStructBegin("Node");
+
+  xfer += oprot->writeFieldBegin("labels", ::apache::thrift::protocol::T_LIST, 1);
+  {
+    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_I32, static_cast<uint32_t>(this->labels.size()));
+    std::vector<int32_t> ::const_iterator _iter10;
+    for (_iter10 = this->labels.begin(); _iter10 != this->labels.end(); ++_iter10)
+    {
+      xfer += oprot->writeI32((*_iter10));
+    }
+    xfer += oprot->writeListEnd();
+  }
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("position", ::apache::thrift::protocol::T_LIST, 2);
+  {
+    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_DOUBLE, static_cast<uint32_t>(this->position.size()));
+    std::vector<double> ::const_iterator _iter11;
+    for (_iter11 = this->position.begin(); _iter11 != this->position.end(); ++_iter11)
+    {
+      xfer += oprot->writeDouble((*_iter11));
+    }
+    xfer += oprot->writeListEnd();
+  }
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  oprot->decrementRecursionDepth();
+  return xfer;
+}
+
+void swap(Node &a, Node &b) {
+  using ::std::swap;
+  swap(a.labels, b.labels);
+  swap(a.position, b.position);
+  swap(a.__isset, b.__isset);
+}
+
+Node::Node(const Node& other12) {
+  labels = other12.labels;
+  position = other12.position;
+  __isset = other12.__isset;
+}
+Node& Node::operator=(const Node& other13) {
+  labels = other13.labels;
+  position = other13.position;
+  __isset = other13.__isset;
+  return *this;
+}
+std::ostream& operator<<(std::ostream& out, const Node& obj) {
+  using apache::thrift::to_string;
+  out << "Node(";
+  out << "labels=" << to_string(obj.labels);
+  out << ", " << "position=" << to_string(obj.position);
+  out << ")";
+  return out;
+}
+
+
 Edge::~Edge() throw() {
 }
 
@@ -103,15 +253,15 @@ void swap(Edge &a, Edge &b) {
   swap(a.__isset, b.__isset);
 }
 
-Edge::Edge(const Edge& other0) {
-  dest = other0.dest;
-  length = other0.length;
-  __isset = other0.__isset;
+Edge::Edge(const Edge& other14) {
+  dest = other14.dest;
+  length = other14.length;
+  __isset = other14.__isset;
 }
-Edge& Edge::operator=(const Edge& other1) {
-  dest = other1.dest;
-  length = other1.length;
-  __isset = other1.__isset;
+Edge& Edge::operator=(const Edge& other15) {
+  dest = other15.dest;
+  length = other15.length;
+  __isset = other15.__isset;
   return *this;
 }
 std::ostream& operator<<(std::ostream& out, const Edge& obj) {
@@ -136,12 +286,12 @@ void Graph::__set_neighbors(const std::map<int32_t, std::set<Edge> > & val) {
   this->neighbors = val;
 }
 
-void Graph::__set_labels(const std::map<int32_t, std::set<int32_t> > & val) {
-  this->labels = val;
+void Graph::__set_nodes(const std::vector<Node> & val) {
+  this->nodes = val;
 }
 
-const char* Graph::ascii_fingerprint = "8545F21F80DA1E6BA2C2AF3FD6440B3F";
-const uint8_t Graph::binary_fingerprint[16] = {0x85,0x45,0xF2,0x1F,0x80,0xDA,0x1E,0x6B,0xA2,0xC2,0xAF,0x3F,0xD6,0x44,0x0B,0x3F};
+const char* Graph::ascii_fingerprint = "7289290673F41D4718449FBB25CEAAB4";
+const uint8_t Graph::binary_fingerprint[16] = {0x72,0x89,0x29,0x06,0x73,0xF4,0x1D,0x47,0x18,0x44,0x9F,0xBB,0x25,0xCE,0xAA,0xB4};
 
 uint32_t Graph::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -167,27 +317,27 @@ uint32_t Graph::read(::apache::thrift::protocol::TProtocol* iprot) {
         if (ftype == ::apache::thrift::protocol::T_MAP) {
           {
             this->cluster.clear();
-            uint32_t _size2;
-            ::apache::thrift::protocol::TType _ktype3;
-            ::apache::thrift::protocol::TType _vtype4;
-            xfer += iprot->readMapBegin(_ktype3, _vtype4, _size2);
-            uint32_t _i6;
-            for (_i6 = 0; _i6 < _size2; ++_i6)
+            uint32_t _size16;
+            ::apache::thrift::protocol::TType _ktype17;
+            ::apache::thrift::protocol::TType _vtype18;
+            xfer += iprot->readMapBegin(_ktype17, _vtype18, _size16);
+            uint32_t _i20;
+            for (_i20 = 0; _i20 < _size16; ++_i20)
             {
-              int32_t _key7;
-              xfer += iprot->readI32(_key7);
-              std::set<int32_t> & _val8 = this->cluster[_key7];
+              int32_t _key21;
+              xfer += iprot->readI32(_key21);
+              std::set<int32_t> & _val22 = this->cluster[_key21];
               {
-                _val8.clear();
-                uint32_t _size9;
-                ::apache::thrift::protocol::TType _etype12;
-                xfer += iprot->readSetBegin(_etype12, _size9);
-                uint32_t _i13;
-                for (_i13 = 0; _i13 < _size9; ++_i13)
+                _val22.clear();
+                uint32_t _size23;
+                ::apache::thrift::protocol::TType _etype26;
+                xfer += iprot->readSetBegin(_etype26, _size23);
+                uint32_t _i27;
+                for (_i27 = 0; _i27 < _size23; ++_i27)
                 {
-                  int32_t _elem14;
-                  xfer += iprot->readI32(_elem14);
-                  _val8.insert(_elem14);
+                  int32_t _elem28;
+                  xfer += iprot->readI32(_elem28);
+                  _val22.insert(_elem28);
                 }
                 xfer += iprot->readSetEnd();
               }
@@ -203,27 +353,27 @@ uint32_t Graph::read(::apache::thrift::protocol::TProtocol* iprot) {
         if (ftype == ::apache::thrift::protocol::T_MAP) {
           {
             this->neighbors.clear();
-            uint32_t _size15;
-            ::apache::thrift::protocol::TType _ktype16;
-            ::apache::thrift::protocol::TType _vtype17;
-            xfer += iprot->readMapBegin(_ktype16, _vtype17, _size15);
-            uint32_t _i19;
-            for (_i19 = 0; _i19 < _size15; ++_i19)
+            uint32_t _size29;
+            ::apache::thrift::protocol::TType _ktype30;
+            ::apache::thrift::protocol::TType _vtype31;
+            xfer += iprot->readMapBegin(_ktype30, _vtype31, _size29);
+            uint32_t _i33;
+            for (_i33 = 0; _i33 < _size29; ++_i33)
             {
-              int32_t _key20;
-              xfer += iprot->readI32(_key20);
-              std::set<Edge> & _val21 = this->neighbors[_key20];
+              int32_t _key34;
+              xfer += iprot->readI32(_key34);
+              std::set<Edge> & _val35 = this->neighbors[_key34];
               {
-                _val21.clear();
-                uint32_t _size22;
-                ::apache::thrift::protocol::TType _etype25;
-                xfer += iprot->readSetBegin(_etype25, _size22);
-                uint32_t _i26;
-                for (_i26 = 0; _i26 < _size22; ++_i26)
+                _val35.clear();
+                uint32_t _size36;
+                ::apache::thrift::protocol::TType _etype39;
+                xfer += iprot->readSetBegin(_etype39, _size36);
+                uint32_t _i40;
+                for (_i40 = 0; _i40 < _size36; ++_i40)
                 {
-                  Edge _elem27;
-                  xfer += _elem27.read(iprot);
-                  _val21.insert(_elem27);
+                  Edge _elem41;
+                  xfer += _elem41.read(iprot);
+                  _val35.insert(_elem41);
                 }
                 xfer += iprot->readSetEnd();
               }
@@ -236,37 +386,21 @@ uint32_t Graph::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 3:
-        if (ftype == ::apache::thrift::protocol::T_MAP) {
+        if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
-            this->labels.clear();
-            uint32_t _size28;
-            ::apache::thrift::protocol::TType _ktype29;
-            ::apache::thrift::protocol::TType _vtype30;
-            xfer += iprot->readMapBegin(_ktype29, _vtype30, _size28);
-            uint32_t _i32;
-            for (_i32 = 0; _i32 < _size28; ++_i32)
+            this->nodes.clear();
+            uint32_t _size42;
+            ::apache::thrift::protocol::TType _etype45;
+            xfer += iprot->readListBegin(_etype45, _size42);
+            this->nodes.resize(_size42);
+            uint32_t _i46;
+            for (_i46 = 0; _i46 < _size42; ++_i46)
             {
-              int32_t _key33;
-              xfer += iprot->readI32(_key33);
-              std::set<int32_t> & _val34 = this->labels[_key33];
-              {
-                _val34.clear();
-                uint32_t _size35;
-                ::apache::thrift::protocol::TType _etype38;
-                xfer += iprot->readSetBegin(_etype38, _size35);
-                uint32_t _i39;
-                for (_i39 = 0; _i39 < _size35; ++_i39)
-                {
-                  int32_t _elem40;
-                  xfer += iprot->readI32(_elem40);
-                  _val34.insert(_elem40);
-                }
-                xfer += iprot->readSetEnd();
-              }
+              xfer += this->nodes[_i46].read(iprot);
             }
-            xfer += iprot->readMapEnd();
+            xfer += iprot->readListEnd();
           }
-          this->__isset.labels = true;
+          this->__isset.nodes = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -291,16 +425,16 @@ uint32_t Graph::write(::apache::thrift::protocol::TProtocol* oprot) const {
   xfer += oprot->writeFieldBegin("cluster", ::apache::thrift::protocol::T_MAP, 1);
   {
     xfer += oprot->writeMapBegin(::apache::thrift::protocol::T_I32, ::apache::thrift::protocol::T_SET, static_cast<uint32_t>(this->cluster.size()));
-    std::map<int32_t, std::set<int32_t> > ::const_iterator _iter41;
-    for (_iter41 = this->cluster.begin(); _iter41 != this->cluster.end(); ++_iter41)
+    std::map<int32_t, std::set<int32_t> > ::const_iterator _iter47;
+    for (_iter47 = this->cluster.begin(); _iter47 != this->cluster.end(); ++_iter47)
     {
-      xfer += oprot->writeI32(_iter41->first);
+      xfer += oprot->writeI32(_iter47->first);
       {
-        xfer += oprot->writeSetBegin(::apache::thrift::protocol::T_I32, static_cast<uint32_t>(_iter41->second.size()));
-        std::set<int32_t> ::const_iterator _iter42;
-        for (_iter42 = _iter41->second.begin(); _iter42 != _iter41->second.end(); ++_iter42)
+        xfer += oprot->writeSetBegin(::apache::thrift::protocol::T_I32, static_cast<uint32_t>(_iter47->second.size()));
+        std::set<int32_t> ::const_iterator _iter48;
+        for (_iter48 = _iter47->second.begin(); _iter48 != _iter47->second.end(); ++_iter48)
         {
-          xfer += oprot->writeI32((*_iter42));
+          xfer += oprot->writeI32((*_iter48));
         }
         xfer += oprot->writeSetEnd();
       }
@@ -312,16 +446,16 @@ uint32_t Graph::write(::apache::thrift::protocol::TProtocol* oprot) const {
   xfer += oprot->writeFieldBegin("neighbors", ::apache::thrift::protocol::T_MAP, 2);
   {
     xfer += oprot->writeMapBegin(::apache::thrift::protocol::T_I32, ::apache::thrift::protocol::T_SET, static_cast<uint32_t>(this->neighbors.size()));
-    std::map<int32_t, std::set<Edge> > ::const_iterator _iter43;
-    for (_iter43 = this->neighbors.begin(); _iter43 != this->neighbors.end(); ++_iter43)
+    std::map<int32_t, std::set<Edge> > ::const_iterator _iter49;
+    for (_iter49 = this->neighbors.begin(); _iter49 != this->neighbors.end(); ++_iter49)
     {
-      xfer += oprot->writeI32(_iter43->first);
+      xfer += oprot->writeI32(_iter49->first);
       {
-        xfer += oprot->writeSetBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(_iter43->second.size()));
-        std::set<Edge> ::const_iterator _iter44;
-        for (_iter44 = _iter43->second.begin(); _iter44 != _iter43->second.end(); ++_iter44)
+        xfer += oprot->writeSetBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(_iter49->second.size()));
+        std::set<Edge> ::const_iterator _iter50;
+        for (_iter50 = _iter49->second.begin(); _iter50 != _iter49->second.end(); ++_iter50)
         {
-          xfer += (*_iter44).write(oprot);
+          xfer += (*_iter50).write(oprot);
         }
         xfer += oprot->writeSetEnd();
       }
@@ -330,24 +464,15 @@ uint32_t Graph::write(::apache::thrift::protocol::TProtocol* oprot) const {
   }
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("labels", ::apache::thrift::protocol::T_MAP, 3);
+  xfer += oprot->writeFieldBegin("nodes", ::apache::thrift::protocol::T_LIST, 3);
   {
-    xfer += oprot->writeMapBegin(::apache::thrift::protocol::T_I32, ::apache::thrift::protocol::T_SET, static_cast<uint32_t>(this->labels.size()));
-    std::map<int32_t, std::set<int32_t> > ::const_iterator _iter45;
-    for (_iter45 = this->labels.begin(); _iter45 != this->labels.end(); ++_iter45)
+    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->nodes.size()));
+    std::vector<Node> ::const_iterator _iter51;
+    for (_iter51 = this->nodes.begin(); _iter51 != this->nodes.end(); ++_iter51)
     {
-      xfer += oprot->writeI32(_iter45->first);
-      {
-        xfer += oprot->writeSetBegin(::apache::thrift::protocol::T_I32, static_cast<uint32_t>(_iter45->second.size()));
-        std::set<int32_t> ::const_iterator _iter46;
-        for (_iter46 = _iter45->second.begin(); _iter46 != _iter45->second.end(); ++_iter46)
-        {
-          xfer += oprot->writeI32((*_iter46));
-        }
-        xfer += oprot->writeSetEnd();
-      }
+      xfer += (*_iter51).write(oprot);
     }
-    xfer += oprot->writeMapEnd();
+    xfer += oprot->writeListEnd();
   }
   xfer += oprot->writeFieldEnd();
 
@@ -361,21 +486,21 @@ void swap(Graph &a, Graph &b) {
   using ::std::swap;
   swap(a.cluster, b.cluster);
   swap(a.neighbors, b.neighbors);
-  swap(a.labels, b.labels);
+  swap(a.nodes, b.nodes);
   swap(a.__isset, b.__isset);
 }
 
-Graph::Graph(const Graph& other47) {
-  cluster = other47.cluster;
-  neighbors = other47.neighbors;
-  labels = other47.labels;
-  __isset = other47.__isset;
+Graph::Graph(const Graph& other52) {
+  cluster = other52.cluster;
+  neighbors = other52.neighbors;
+  nodes = other52.nodes;
+  __isset = other52.__isset;
 }
-Graph& Graph::operator=(const Graph& other48) {
-  cluster = other48.cluster;
-  neighbors = other48.neighbors;
-  labels = other48.labels;
-  __isset = other48.__isset;
+Graph& Graph::operator=(const Graph& other53) {
+  cluster = other53.cluster;
+  neighbors = other53.neighbors;
+  nodes = other53.nodes;
+  __isset = other53.__isset;
   return *this;
 }
 std::ostream& operator<<(std::ostream& out, const Graph& obj) {
@@ -383,7 +508,7 @@ std::ostream& operator<<(std::ostream& out, const Graph& obj) {
   out << "Graph(";
   out << "cluster=" << to_string(obj.cluster);
   out << ", " << "neighbors=" << to_string(obj.neighbors);
-  out << ", " << "labels=" << to_string(obj.labels);
+  out << ", " << "nodes=" << to_string(obj.nodes);
   out << ")";
   return out;
 }

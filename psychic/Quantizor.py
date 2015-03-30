@@ -159,10 +159,10 @@ class quantize_args:
       elif fid == 4:
         if ftype == TType.LIST:
           self.params = []
-          (_etype51, _size48) = iprot.readListBegin()
-          for _i52 in xrange(_size48):
-            _elem53 = iprot.readDouble();
-            self.params.append(_elem53)
+          (_etype56, _size53) = iprot.readListBegin()
+          for _i57 in xrange(_size53):
+            _elem58 = iprot.readDouble();
+            self.params.append(_elem58)
           iprot.readListEnd()
         else:
           iprot.skip(ftype)
@@ -191,8 +191,8 @@ class quantize_args:
     if self.params is not None:
       oprot.writeFieldBegin('params', TType.LIST, 4)
       oprot.writeListBegin(TType.DOUBLE, len(self.params))
-      for iter54 in self.params:
-        oprot.writeDouble(iter54)
+      for iter59 in self.params:
+        oprot.writeDouble(iter59)
       oprot.writeListEnd()
       oprot.writeFieldEnd()
     oprot.writeFieldStop()

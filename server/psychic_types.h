@@ -19,9 +19,60 @@
 
 
 
+class Node;
+
 class Edge;
 
 class Graph;
+
+typedef struct _Node__isset {
+  _Node__isset() : labels(false), position(false) {}
+  bool labels :1;
+  bool position :1;
+} _Node__isset;
+
+class Node {
+ public:
+
+  static const char* ascii_fingerprint; // = "A2801F02B81B73CF35BAC5309B029DC3";
+  static const uint8_t binary_fingerprint[16]; // = {0xA2,0x80,0x1F,0x02,0xB8,0x1B,0x73,0xCF,0x35,0xBA,0xC5,0x30,0x9B,0x02,0x9D,0xC3};
+
+  Node(const Node&);
+  Node& operator=(const Node&);
+  Node() {
+  }
+
+  virtual ~Node() throw();
+  std::vector<int32_t>  labels;
+  std::vector<double>  position;
+
+  _Node__isset __isset;
+
+  void __set_labels(const std::vector<int32_t> & val);
+
+  void __set_position(const std::vector<double> & val);
+
+  bool operator == (const Node & rhs) const
+  {
+    if (!(labels == rhs.labels))
+      return false;
+    if (!(position == rhs.position))
+      return false;
+    return true;
+  }
+  bool operator != (const Node &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Node & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+  friend std::ostream& operator<<(std::ostream& out, const Node& obj);
+};
+
+void swap(Node &a, Node &b);
 
 typedef struct _Edge__isset {
   _Edge__isset() : dest(false), length(false) {}
@@ -39,7 +90,6 @@ class Edge {
   Edge& operator=(const Edge&);
   Edge() : dest(0), length(0) {
   }
-
 
   virtual ~Edge() throw();
   int32_t dest;
@@ -79,17 +129,17 @@ class Edge {
 void swap(Edge &a, Edge &b);
 
 typedef struct _Graph__isset {
-  _Graph__isset() : cluster(false), neighbors(false), labels(false) {}
+  _Graph__isset() : cluster(false), neighbors(false), nodes(false) {}
   bool cluster :1;
   bool neighbors :1;
-  bool labels :1;
+  bool nodes :1;
 } _Graph__isset;
 
 class Graph {
  public:
 
-  static const char* ascii_fingerprint; // = "8545F21F80DA1E6BA2C2AF3FD6440B3F";
-  static const uint8_t binary_fingerprint[16]; // = {0x85,0x45,0xF2,0x1F,0x80,0xDA,0x1E,0x6B,0xA2,0xC2,0xAF,0x3F,0xD6,0x44,0x0B,0x3F};
+  static const char* ascii_fingerprint; // = "7289290673F41D4718449FBB25CEAAB4";
+  static const uint8_t binary_fingerprint[16]; // = {0x72,0x89,0x29,0x06,0x73,0xF4,0x1D,0x47,0x18,0x44,0x9F,0xBB,0x25,0xCE,0xAA,0xB4};
 
   Graph(const Graph&);
   Graph& operator=(const Graph&);
@@ -99,7 +149,7 @@ class Graph {
   virtual ~Graph() throw();
   std::map<int32_t, std::set<int32_t> >  cluster;
   std::map<int32_t, std::set<Edge> >  neighbors;
-  std::map<int32_t, std::set<int32_t> >  labels;
+  std::vector<Node>  nodes;
 
   _Graph__isset __isset;
 
@@ -107,7 +157,7 @@ class Graph {
 
   void __set_neighbors(const std::map<int32_t, std::set<Edge> > & val);
 
-  void __set_labels(const std::map<int32_t, std::set<int32_t> > & val);
+  void __set_nodes(const std::vector<Node> & val);
 
   bool operator == (const Graph & rhs) const
   {
@@ -115,7 +165,7 @@ class Graph {
       return false;
     if (!(neighbors == rhs.neighbors))
       return false;
-    if (!(labels == rhs.labels))
+    if (!(nodes == rhs.nodes))
       return false;
     return true;
   }

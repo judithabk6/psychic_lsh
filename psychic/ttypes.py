@@ -17,6 +17,100 @@ except:
 
 
 
+class Node:
+  """
+  Attributes:
+   - labels
+   - position
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.LIST, 'labels', (TType.I32,None), None, ), # 1
+    (2, TType.LIST, 'position', (TType.DOUBLE,None), None, ), # 2
+  )
+
+  def __init__(self, labels=None, position=None,):
+    self.labels = labels
+    self.position = position
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.LIST:
+          self.labels = []
+          (_etype3, _size0) = iprot.readListBegin()
+          for _i4 in xrange(_size0):
+            _elem5 = iprot.readI32();
+            self.labels.append(_elem5)
+          iprot.readListEnd()
+        else:
+          iprot.skip(ftype)
+      elif fid == 2:
+        if ftype == TType.LIST:
+          self.position = []
+          (_etype9, _size6) = iprot.readListBegin()
+          for _i10 in xrange(_size6):
+            _elem11 = iprot.readDouble();
+            self.position.append(_elem11)
+          iprot.readListEnd()
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('Node')
+    if self.labels is not None:
+      oprot.writeFieldBegin('labels', TType.LIST, 1)
+      oprot.writeListBegin(TType.I32, len(self.labels))
+      for iter12 in self.labels:
+        oprot.writeI32(iter12)
+      oprot.writeListEnd()
+      oprot.writeFieldEnd()
+    if self.position is not None:
+      oprot.writeFieldBegin('position', TType.LIST, 2)
+      oprot.writeListBegin(TType.DOUBLE, len(self.position))
+      for iter13 in self.position:
+        oprot.writeDouble(iter13)
+      oprot.writeListEnd()
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __hash__(self):
+    value = 17
+    value = (value * 31) ^ hash(self.labels)
+    value = (value * 31) ^ hash(self.position)
+    return value
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
 class Edge:
   """
   Attributes:
@@ -100,20 +194,20 @@ class Graph:
   Attributes:
    - cluster
    - neighbors
-   - labels
+   - nodes
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.MAP, 'cluster', (TType.I32,None,TType.SET,(TType.I32,None)), None, ), # 1
     (2, TType.MAP, 'neighbors', (TType.I32,None,TType.SET,(TType.STRUCT,(Edge, Edge.thrift_spec))), None, ), # 2
-    (3, TType.MAP, 'labels', (TType.I32,None,TType.SET,(TType.I32,None)), None, ), # 3
+    (3, TType.LIST, 'nodes', (TType.STRUCT,(Node, Node.thrift_spec)), None, ), # 3
   )
 
-  def __init__(self, cluster=None, neighbors=None, labels=None,):
+  def __init__(self, cluster=None, neighbors=None, nodes=None,):
     self.cluster = cluster
     self.neighbors = neighbors
-    self.labels = labels
+    self.nodes = nodes
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -127,50 +221,45 @@ class Graph:
       if fid == 1:
         if ftype == TType.MAP:
           self.cluster = {}
-          (_ktype1, _vtype2, _size0 ) = iprot.readMapBegin()
-          for _i4 in xrange(_size0):
-            _key5 = iprot.readI32();
-            _val6 = set()
-            (_etype10, _size7) = iprot.readSetBegin()
-            for _i11 in xrange(_size7):
-              _elem12 = iprot.readI32();
-              _val6.add(_elem12)
+          (_ktype15, _vtype16, _size14 ) = iprot.readMapBegin()
+          for _i18 in xrange(_size14):
+            _key19 = iprot.readI32();
+            _val20 = set()
+            (_etype24, _size21) = iprot.readSetBegin()
+            for _i25 in xrange(_size21):
+              _elem26 = iprot.readI32();
+              _val20.add(_elem26)
             iprot.readSetEnd()
-            self.cluster[_key5] = _val6
+            self.cluster[_key19] = _val20
           iprot.readMapEnd()
         else:
           iprot.skip(ftype)
       elif fid == 2:
         if ftype == TType.MAP:
           self.neighbors = {}
-          (_ktype14, _vtype15, _size13 ) = iprot.readMapBegin()
-          for _i17 in xrange(_size13):
-            _key18 = iprot.readI32();
-            _val19 = set()
-            (_etype23, _size20) = iprot.readSetBegin()
-            for _i24 in xrange(_size20):
-              _elem25 = Edge()
-              _elem25.read(iprot)
-              _val19.add(_elem25)
+          (_ktype28, _vtype29, _size27 ) = iprot.readMapBegin()
+          for _i31 in xrange(_size27):
+            _key32 = iprot.readI32();
+            _val33 = set()
+            (_etype37, _size34) = iprot.readSetBegin()
+            for _i38 in xrange(_size34):
+              _elem39 = Edge()
+              _elem39.read(iprot)
+              _val33.add(_elem39)
             iprot.readSetEnd()
-            self.neighbors[_key18] = _val19
+            self.neighbors[_key32] = _val33
           iprot.readMapEnd()
         else:
           iprot.skip(ftype)
       elif fid == 3:
-        if ftype == TType.MAP:
-          self.labels = {}
-          (_ktype27, _vtype28, _size26 ) = iprot.readMapBegin()
-          for _i30 in xrange(_size26):
-            _key31 = iprot.readI32();
-            _val32 = set()
-            (_etype36, _size33) = iprot.readSetBegin()
-            for _i37 in xrange(_size33):
-              _elem38 = iprot.readI32();
-              _val32.add(_elem38)
-            iprot.readSetEnd()
-            self.labels[_key31] = _val32
-          iprot.readMapEnd()
+        if ftype == TType.LIST:
+          self.nodes = []
+          (_etype43, _size40) = iprot.readListBegin()
+          for _i44 in xrange(_size40):
+            _elem45 = Node()
+            _elem45.read(iprot)
+            self.nodes.append(_elem45)
+          iprot.readListEnd()
         else:
           iprot.skip(ftype)
       else:
@@ -186,35 +275,31 @@ class Graph:
     if self.cluster is not None:
       oprot.writeFieldBegin('cluster', TType.MAP, 1)
       oprot.writeMapBegin(TType.I32, TType.SET, len(self.cluster))
-      for kiter39,viter40 in self.cluster.items():
-        oprot.writeI32(kiter39)
-        oprot.writeSetBegin(TType.I32, len(viter40))
-        for iter41 in viter40:
-          oprot.writeI32(iter41)
+      for kiter46,viter47 in self.cluster.items():
+        oprot.writeI32(kiter46)
+        oprot.writeSetBegin(TType.I32, len(viter47))
+        for iter48 in viter47:
+          oprot.writeI32(iter48)
         oprot.writeSetEnd()
       oprot.writeMapEnd()
       oprot.writeFieldEnd()
     if self.neighbors is not None:
       oprot.writeFieldBegin('neighbors', TType.MAP, 2)
       oprot.writeMapBegin(TType.I32, TType.SET, len(self.neighbors))
-      for kiter42,viter43 in self.neighbors.items():
-        oprot.writeI32(kiter42)
-        oprot.writeSetBegin(TType.STRUCT, len(viter43))
-        for iter44 in viter43:
-          iter44.write(oprot)
+      for kiter49,viter50 in self.neighbors.items():
+        oprot.writeI32(kiter49)
+        oprot.writeSetBegin(TType.STRUCT, len(viter50))
+        for iter51 in viter50:
+          iter51.write(oprot)
         oprot.writeSetEnd()
       oprot.writeMapEnd()
       oprot.writeFieldEnd()
-    if self.labels is not None:
-      oprot.writeFieldBegin('labels', TType.MAP, 3)
-      oprot.writeMapBegin(TType.I32, TType.SET, len(self.labels))
-      for kiter45,viter46 in self.labels.items():
-        oprot.writeI32(kiter45)
-        oprot.writeSetBegin(TType.I32, len(viter46))
-        for iter47 in viter46:
-          oprot.writeI32(iter47)
-        oprot.writeSetEnd()
-      oprot.writeMapEnd()
+    if self.nodes is not None:
+      oprot.writeFieldBegin('nodes', TType.LIST, 3)
+      oprot.writeListBegin(TType.STRUCT, len(self.nodes))
+      for iter52 in self.nodes:
+        iter52.write(oprot)
+      oprot.writeListEnd()
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -227,7 +312,7 @@ class Graph:
     value = 17
     value = (value * 31) ^ hash(self.cluster)
     value = (value * 31) ^ hash(self.neighbors)
-    value = (value * 31) ^ hash(self.labels)
+    value = (value * 31) ^ hash(self.nodes)
     return value
 
   def __repr__(self):

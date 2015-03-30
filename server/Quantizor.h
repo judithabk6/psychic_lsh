@@ -136,8 +136,8 @@ typedef struct _Quantizor_quantize_result__isset {
 class Quantizor_quantize_result {
  public:
 
-  static const char* ascii_fingerprint; // = "A5E4978334633512AE3DA234B1F8CA77";
-  static const uint8_t binary_fingerprint[16]; // = {0xA5,0xE4,0x97,0x83,0x34,0x63,0x35,0x12,0xAE,0x3D,0xA2,0x34,0xB1,0xF8,0xCA,0x77};
+  static const char* ascii_fingerprint; // = "AC1FF3475851A165225FC1F6BC8B4E21";
+  static const uint8_t binary_fingerprint[16]; // = {0xAC,0x1F,0xF3,0x47,0x58,0x51,0xA1,0x65,0x22,0x5F,0xC1,0xF6,0xBC,0x8B,0x4E,0x21};
 
   Quantizor_quantize_result(const Quantizor_quantize_result&);
   Quantizor_quantize_result& operator=(const Quantizor_quantize_result&);
@@ -177,8 +177,8 @@ typedef struct _Quantizor_quantize_presult__isset {
 class Quantizor_quantize_presult {
  public:
 
-  static const char* ascii_fingerprint; // = "A5E4978334633512AE3DA234B1F8CA77";
-  static const uint8_t binary_fingerprint[16]; // = {0xA5,0xE4,0x97,0x83,0x34,0x63,0x35,0x12,0xAE,0x3D,0xA2,0x34,0xB1,0xF8,0xCA,0x77};
+  static const char* ascii_fingerprint; // = "AC1FF3475851A165225FC1F6BC8B4E21";
+  static const uint8_t binary_fingerprint[16]; // = {0xAC,0x1F,0xF3,0x47,0x58,0x51,0xA1,0x65,0x22,0x5F,0xC1,0xF6,0xBC,0x8B,0x4E,0x21};
 
 
   virtual ~Quantizor_quantize_presult() throw();
