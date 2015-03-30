@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 #include <fstream>
 
 using namespace std;
@@ -15,6 +16,13 @@ using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
 
 using boost::shared_ptr;
+
+double distance(Node& a, Node &b){
+  double sum=0;
+  for(int i=0;i<a.position.size();i++)
+    sum += pow(a.position[i]-b.position[i], 2);
+  return sqrt(sum);
+}
 
 class QuantizorHandler : virtual public QuantizorIf {
  public:
