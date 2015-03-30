@@ -3,9 +3,10 @@ struct Edge {
   2: double length
 }
 
-struct Graph {
+struct Graph {  
   1: map<i32, set<i32>> cluster,
-  2: map<i32, set<Edge>> neighbors
+  2: map<i32, set<Edge>> neighbors,
+  3: map<i32, set<i32>> labels,
 }
 
 

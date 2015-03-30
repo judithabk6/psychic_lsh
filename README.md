@@ -3,8 +3,8 @@
 *Phase 1: Création du graphe*
 
 Le but est de créer un fichier graphe qui contient : 
-- N M L<-- Nombre de noeuds, Nombre de connections, Nombre de Labels
-- Sur les lignes 1+i à 1+N : k entiers, les labels du noeuds i
+- N M<-- Nombre de noeuds, Nombre de connections
+- Sur les lignes 1+i à 1+N : k, suivi de k entiers, les labels du noeuds i
 - Sur les lignes 1+N+j à 1+N+M : 2 entiers, un flottant, décrivant une arête entre deux noeuds.
 
 On peut le faire en whatever. Ça peut dépendre du dataset. On s'en fout. Le but c'est d'avoir le fichier qui décrit le graphe, prêt à servir, le plus vite possible.

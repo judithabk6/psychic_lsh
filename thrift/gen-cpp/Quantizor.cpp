@@ -61,14 +61,14 @@ uint32_t Quantizor_quantize_args::read(::apache::thrift::protocol::TProtocol* ip
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->params.clear();
-            uint32_t _size34;
-            ::apache::thrift::protocol::TType _etype37;
-            xfer += iprot->readListBegin(_etype37, _size34);
-            this->params.resize(_size34);
-            uint32_t _i38;
-            for (_i38 = 0; _i38 < _size34; ++_i38)
+            uint32_t _size49;
+            ::apache::thrift::protocol::TType _etype52;
+            xfer += iprot->readListBegin(_etype52, _size49);
+            this->params.resize(_size49);
+            uint32_t _i53;
+            for (_i53 = 0; _i53 < _size49; ++_i53)
             {
-              xfer += iprot->readDouble(this->params[_i38]);
+              xfer += iprot->readDouble(this->params[_i53]);
             }
             xfer += iprot->readListEnd();
           }
@@ -109,10 +109,10 @@ uint32_t Quantizor_quantize_args::write(::apache::thrift::protocol::TProtocol* o
   xfer += oprot->writeFieldBegin("params", ::apache::thrift::protocol::T_LIST, 4);
   {
     xfer += oprot->writeListBegin(::apache::thrift::protocol::T_DOUBLE, static_cast<uint32_t>(this->params.size()));
-    std::vector<double> ::const_iterator _iter39;
-    for (_iter39 = this->params.begin(); _iter39 != this->params.end(); ++_iter39)
+    std::vector<double> ::const_iterator _iter54;
+    for (_iter54 = this->params.begin(); _iter54 != this->params.end(); ++_iter54)
     {
-      xfer += oprot->writeDouble((*_iter39));
+      xfer += oprot->writeDouble((*_iter54));
     }
     xfer += oprot->writeListEnd();
   }
@@ -149,10 +149,10 @@ uint32_t Quantizor_quantize_pargs::write(::apache::thrift::protocol::TProtocol* 
   xfer += oprot->writeFieldBegin("params", ::apache::thrift::protocol::T_LIST, 4);
   {
     xfer += oprot->writeListBegin(::apache::thrift::protocol::T_DOUBLE, static_cast<uint32_t>((*(this->params)).size()));
-    std::vector<double> ::const_iterator _iter40;
-    for (_iter40 = (*(this->params)).begin(); _iter40 != (*(this->params)).end(); ++_iter40)
+    std::vector<double> ::const_iterator _iter55;
+    for (_iter55 = (*(this->params)).begin(); _iter55 != (*(this->params)).end(); ++_iter55)
     {
-      xfer += oprot->writeDouble((*_iter40));
+      xfer += oprot->writeDouble((*_iter55));
     }
     xfer += oprot->writeListEnd();
   }

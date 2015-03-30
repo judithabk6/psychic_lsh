@@ -62,9 +62,7 @@ class Edge {
     return !(*this == rhs);
   }
 
-  bool operator < (const Edge & rhs) const{
-    return dest < rhs.dest || (dest == rhs.dest && length<rhs.length);
-  };
+  bool operator < (const Edge & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
@@ -75,16 +73,17 @@ class Edge {
 void swap(Edge &a, Edge &b);
 
 typedef struct _Graph__isset {
-  _Graph__isset() : cluster(false), neighbors(false) {}
+  _Graph__isset() : cluster(false), neighbors(false), labels(false) {}
   bool cluster :1;
   bool neighbors :1;
+  bool labels :1;
 } _Graph__isset;
 
 class Graph {
  public:
 
-  static const char* ascii_fingerprint; // = "94DF3A228FA8CE3F91342E0CAE116FCD";
-  static const uint8_t binary_fingerprint[16]; // = {0x94,0xDF,0x3A,0x22,0x8F,0xA8,0xCE,0x3F,0x91,0x34,0x2E,0x0C,0xAE,0x11,0x6F,0xCD};
+  static const char* ascii_fingerprint; // = "8545F21F80DA1E6BA2C2AF3FD6440B3F";
+  static const uint8_t binary_fingerprint[16]; // = {0x85,0x45,0xF2,0x1F,0x80,0xDA,0x1E,0x6B,0xA2,0xC2,0xAF,0x3F,0xD6,0x44,0x0B,0x3F};
 
   Graph(const Graph&);
   Graph& operator=(const Graph&);
@@ -94,6 +93,7 @@ class Graph {
   virtual ~Graph() throw();
   std::map<int32_t, std::set<int32_t> >  cluster;
   std::map<int32_t, std::set<Edge> >  neighbors;
+  std::map<int32_t, std::set<int32_t> >  labels;
 
   _Graph__isset __isset;
 
@@ -101,11 +101,15 @@ class Graph {
 
   void __set_neighbors(const std::map<int32_t, std::set<Edge> > & val);
 
+  void __set_labels(const std::map<int32_t, std::set<int32_t> > & val);
+
   bool operator == (const Graph & rhs) const
   {
     if (!(cluster == rhs.cluster))
       return false;
     if (!(neighbors == rhs.neighbors))
+      return false;
+    if (!(labels == rhs.labels))
       return false;
     return true;
   }
