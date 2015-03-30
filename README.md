@@ -1,4 +1,4 @@
-# psychic_lsh
+# Méthode
 
 *Phase 1: Création du graphe*
 
