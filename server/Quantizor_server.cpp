@@ -32,28 +32,31 @@ class QuantizorHandler : virtual public QuantizorIf {
     int nb_edges = 0;
     for(auto node: graph.neighbors)
       nb_edges += node.second.size();
-    cout << "Loaded : "<<graph.labels.size()<<" nodes and "
+    cout << "Loaded : "<<graph.nodes.size()<<" nodes and "
          <<nb_edges/2 << " relations."<<endl;
   }
 
 
   void loadGraph(string fileName, Graph& toLoad) {
     fstream ifs(fileName, ios::in);
-    int n_nodes, n_edges, n_labels, label;
-    ifs >> n_nodes >> n_edges;
+    int n_nodes, n_edges, n_labels, label, n_dim;
+    ifs >> n_nodes >> n_edges >> n_dim;
     for(int i=0;i<n_nodes;i++){
-      
-      toLoad.cluster[i] = set<int>();
-      toLoad.cluster[i].insert(i);
-
-      toLoad.labels[i] = set<int>();
       toLoad.neighbors[i] = set<Edge>();
-      
+
+      Node n;
+      for(int d=0;d<n_dim;d++){
+        double v;
+        ifs >> v;
+        n.position.push_back(v);
+      }
+
       ifs >> n_labels;
       for(int k=0;k<n_labels;k++){
         ifs >> label;
-        toLoad.labels[i].insert(label);
+        n.labels.push_back(label);
       }
+      toLoad.nodes.push_back(n);
     }
     int a, b;
     double length;
