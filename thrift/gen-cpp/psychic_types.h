@@ -40,9 +40,13 @@ class Edge {
   Edge() : dest(0), length(0) {
   }
 
+
   virtual ~Edge() throw();
   int32_t dest;
   double length;
+
+  Edge(int32_t d, double l) : dest(d), length(l) {
+  }
 
   _Edge__isset __isset;
 
@@ -62,7 +66,9 @@ class Edge {
     return !(*this == rhs);
   }
 
-  bool operator < (const Edge & ) const;
+  bool operator < (const Edge & rhs) const {
+    return (dest<rhs.dest || (dest==rhs.dest && length<rhs.length));
+  }
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
