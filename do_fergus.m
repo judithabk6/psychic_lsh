@@ -6,6 +6,9 @@ NUM_EVECS = 5; % how many eigenvectors/eigenfunctions to use
 SIGMA = 0.2; % controls affinity in graph Laplacian
 n_labels = 100;
 
+%%
+load('data.mat');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Load data and labels
 
@@ -17,11 +20,9 @@ C = textscan(fileId, '%d');
 C = C{1};
 n_nodes = C(1);
 data = reshape(C(2:end), 3, n_nodes)';
-%%
 positions = zeros(n_nodes,32);
 for i=1:n_nodes
-    data(i,3) = data(i,3) + 1;
-    positions(i,:) = m.Data.x(data(i,1)+1,:);
+    positions(i,:) = m.Data.x(data(i,1),:);
 end;
 
 
@@ -41,10 +42,14 @@ for i=labelled
     y(i,data(i,3))=1;
 end;
 
-% build diagonal Lambda matrix
-lambda=zeros(n_nodes,1);
-lambda(labelled)=1000;
-Lambda=diag(lambda);
+% build sparse diagonal Lambda matrix
+labelled = double(labelled);
+n_nodes = double(n_nodes);
+Lambda = sparse(labelled,labelled,1000*ones(size(labelled)),n_nodes, n_nodes);
+
+for i=labelled
+    Lambda(i,i) = 1000;
+end
 
  
  

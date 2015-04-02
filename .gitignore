@@ -3,3 +3,5 @@ thrift/*
 *.graph
 data/*
 *~
+*.mat
+
