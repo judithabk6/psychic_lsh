@@ -1,3 +1,4 @@
 *.pyc
 thrift/*
 *.graph
+data/*
