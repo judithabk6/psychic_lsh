@@ -24,6 +24,8 @@ vv_new = make_zero_one_format(vv['fine_labels'])
 sq = uu['fine_labels']+vv['fine_labels']
 #final = np.hstack((np.column_stack((ind,nn)), sq))
 final=np.column_stack((ind,nn,sq))
+non_zero_ind = final[:,0]!=0
+final = final[non_zero_ind,:]
 
 final = final.astype(np.dtype('a'), copy=False)
 fich = open("nodes.txt", "w")
