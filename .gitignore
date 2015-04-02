@@ -2,3 +2,4 @@
 thrift/*
 *.graph
 data/*
+*~

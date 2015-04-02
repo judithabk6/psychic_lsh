@@ -12,15 +12,16 @@ n_labels = 100;
 m = memmapfile('matlab_gist_PCA.raw', 'Format',...
                 {'single', [79302017 32], 'x'});
 
-fileId = fopen('ids_labels.dat');
+fileId = fopen('nodes.txt');
 C = textscan(fileId, '%d');
 C = C{1};
 n_nodes = C(1);
 data = reshape(C(2:end), 3, n_nodes)';
-
+%%
 positions = zeros(n_nodes,32);
 for i=1:n_nodes
-    positions(i,:) = m.Data.x(data(i,1),:);
+    data(i,3) = data(i,3) + 1;
+    positions(i,:) = m.Data.x(data(i,1)+1,:);
 end;
 
 
