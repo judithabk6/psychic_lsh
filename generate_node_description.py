@@ -27,6 +27,14 @@ final=np.column_stack((ind,nn,sq))
 non_zero_ind = final[:,0]!=0
 final = final[non_zero_ind,:]
 
+## for python...
+final[:,0] = final[:,0] - 1
+tab = np.load('transformed.npy')
+subtab = tab[final[:,0], :]
+
+np.save('sub_transformed.npy', subtab)
+np.save('nodes.npy', final)
+
 final = final.astype(np.dtype('a'), copy=False)
 fich = open("nodes.txt", "w")
 fich.write(str(len(final)) + '\n')
