@@ -6,18 +6,20 @@ NUM_EVECS = 5; % how many eigenvectors/eigenfunctions to use
 SIGMA = 0.2; % controls affinity in graph Laplacian
 n_labels = 100;
 
+%%
+load('data.mat');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Load data and labels
 
 m = memmapfile('matlab_gist_PCA.raw', 'Format',...
                 {'single', [79302017 32], 'x'});
 
-fileId = fopen('ids_labels.dat');
+fileId = fopen('nodes.txt');
 C = textscan(fileId, '%d');
 C = C{1};
 n_nodes = C(1);
 data = reshape(C(2:end), 3, n_nodes)';
-
 positions = zeros(n_nodes,32);
 for i=1:n_nodes
     positions(i,:) = m.Data.x(data(i,1),:);
@@ -40,10 +42,14 @@ for i=labelled
     y(i,data(i,3))=1;
 end;
 
-% build diagonal Lambda matrix
-lambda=zeros(n_nodes,1);
-lambda(labelled)=1000;
-Lambda=diag(lambda);
+% build sparse diagonal Lambda matrix
+labelled = double(labelled);
+n_nodes = double(n_nodes);
+Lambda = sparse(labelled,labelled,1000*ones(size(labelled)),n_nodes, n_nodes);
+
+for i=labelled
+    Lambda(i,i) = 1000;
+end
 
  
  
