@@ -1,0 +1,25 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Locally Sensitive Hashing}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Presentation of the principle}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Control of the induced error}{section.2}% 4
+\BOOKMARK [1][-]{section.3}{Experiments}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Presentation of the tinyImages and CIFAR100 dataset}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Fergus algorithm as a baseline}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.3}{Testing setting}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.4}{Results}{section.3}% 9
+\BOOKMARK [1][-]{section.4}{Conclusion and future work}{}% 10
+\BOOKMARK [1][-]{section.5}{Submission of papers to NIPS 2014}{}% 11
+\BOOKMARK [2][-]{subsection.5.1}{Style}{section.5}% 12
+\BOOKMARK [2][-]{subsection.5.2}{Retrieval of style files}{section.5}% 13
+\BOOKMARK [1][-]{section.6}{General formatting instructions}{}% 14
+\BOOKMARK [1][-]{section.7}{Headings: first level}{}% 15
+\BOOKMARK [2][-]{subsection.7.1}{Headings: second level}{section.7}% 16
+\BOOKMARK [3][-]{subsubsection.7.1.1}{Headings: third level}{subsection.7.1}% 17
+\BOOKMARK [1][-]{section.8}{Citations, figures, tables, references}{}% 18
+\BOOKMARK [2][-]{subsection.8.1}{Citations within the text}{section.8}% 19
+\BOOKMARK [2][-]{subsection.8.2}{Footnotes}{section.8}% 20
+\BOOKMARK [2][-]{subsection.8.3}{Figures}{section.8}% 21
+\BOOKMARK [2][-]{subsection.8.4}{Tables}{section.8}% 22
+\BOOKMARK [1][-]{section.9}{Final instructions}{}% 23
+\BOOKMARK [1][-]{section.10}{Preparing PostScript or PDF files}{}% 24
+\BOOKMARK [2][-]{subsection.10.1}{Margins in LaTeX}{section.10}% 25
