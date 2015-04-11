@@ -5,7 +5,12 @@ data/*
 *.aux
 *.log
 *.synctex.gz
-report.pdf
+report/*.pdf
+report/*.out
+report/*.log
+report/*.aux
 *~
 *.mat
+
+
 
