@@ -2,6 +2,7 @@
 \usepackage{nips14submit_e,times}
 \usepackage{hyperref}
 \usepackage{url}
+\usepackage{amsmath, amsfonts}
 \usepackage{graphicx}
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
 
@@ -38,45 +39,72 @@ MVA student - ENS Cachan \\
 \maketitle
 
 \begin{abstract}
-Several Semi-Supervised Learning algorithms make use of unlabeled examples to estimate a manifold through a discrete graph that represents it well. Building a complete and exact graph is a $O(n^2)$ operation, which is intractable for larger scale problems. A sensible way of dealing with this issue is to use approximate nearest neighbors search to find the edges of a k-NN (hence sparse) graph. Using Locally Sensitive Hashing will lead to some errors in the graph construction. This article is a study of how those errors will affect the generalization bound on the Harmonic Function Solution for label propagation on a graph. Practical results on the CIFAR dataset will complement those theoretical results.
+Several Semi-Supervised Learning algorithms make use of unlabeled examples to estimate a manifold through a discrete graph that represents it well. Building an exact graph is at least $\mathcal{O}(n^2)$ operation, which is intractable for larger scale problems. A sensible way of dealing with this issue is to use approximate nearest neighbors search to find the edges of a k-NN (hence sparse) graph. Using Locally Sensitive Hashing will lead to some errors in the graph construction. This article is a study of how those errors will affect the generalization bound on the Harmonic Function Solution for label propagation on a graph. Practical results on the CIFAR dataset will complement those theoretical results.
 \end{abstract}
 
 
-\section{Introduction}
-In this work, we are interested in semi-supervised learning (SSL) settings on a large number of points. Such efficient methods can scale and deal with raw data directly collected from the internet and without further filtering. As an example of such a dataset, we can consider the classification of images. A first problem is to extract relevant features, and another problem, which is our focus here, is to efficiently classify unlabeled images using a small number of labeled examples - i.e. SSL. SSL methods often rely on the density structure of the data itself to propagate known labels to areas lacking annotations, and provide a natural way to incorporate labeling uncertainty. However, to model the density of the data, each point must measure its proximity to every other. This requires polynomial time – prohibitive for large-scale problems. 
+\section{Semi-Supervised Learning Framework}
+In this work, we are interested in semi-supervised learning (SSL) settings on a large number of points. The goal of SSL is to leverage a large number of unlabelled data points to estimate the underlying manifold geometry. We will call this manifold $\mathcal{M}$ in the rest of this article. Of our $n$ data points, we only have $n_l$, growing slowly with $n$ labelled points and $n_u$ unlabelled points. The goal is to propagate labels over the manifold.\\
+It is reasonable to assume that for a good feature space, the labelling function will be smooth over $\mathcal{M}$. This intuition leads us to consider Harmonic Function Solutions : 
+$$\ell^* = argmin_{\ell \in \mathcal{R}^n} (\ell-y)^TC(\ell-y) + \ell^TQ\ell$$
+Where $(\ell-y)^TC(\ell-y)$ ensures that labelled points are still well classified, and $\ell^TQ\ell$ is responsible for the smoothness of the solution over the graph. If data points are representative of $\mathcal{M}$, and the graph is well estimated, this should lead to a smooth solution over $\mathcal{M}$ as well. 
 
- The most popular approaches are based on the graph Laplacian, which do not scale for two distinct reasons (we consider $N$ nodes):
+Two problem arises when the problem grows in scale :
 \begin{itemize}
-\item the construction of the graph itself requires $N^2$ distance comparisons,
-\item the manipulation of the laplacian matrix itself (inversion is not possible etc).
+\item Constructing the graph itself requires $\mathcal{O}(n^2)$ distance comparisons,
+\item Inverting the Laplacian matrix is around $\mathcal{O}(n^3)$.
 \end{itemize}
 
-Previous work (citer Fergus) has previously tackled this issue by only considering the first eigenvalues of the Laplacian, and compute the approximation without needing to consider the full matrix. To achieve this goal, the authors apply results from the spectral graph theory to compute accurate numerical approximations to the eigenvectors of the normalized
-graph Laplacian and use these approximations to easily propagate labels through the whole graph. 
+We are interested here in a solution to the first problem, in the form of approximate nearest neighbors. The hope is that the error introduced in the graph by approximate neighborhood will be small enough.
 
-An important feature of the solution function in SSL is that is si smooth over the graph, meaning that close points (in some metrics defined by the user) will have close labels. In Fergus algorithm, smoothness is enforced by using a penalization term. Another method is to impose that the solution function is harmonic. The harmonic property has the advantage of making the computation iterative: to compute the label of one node, you juste have to consider its neighbours, and the degree of the node. The problems related to manipulation of the explicit Laplacian are henced avoided. The remaining issue is to obtain the graph. Given the updating formula, only close nodes can modify heavily the label, and given the assumed density of the data, approximate nearest neighbours should have good performance.
 
 \section{Locality Sensitive Hashing}
-\subsection{Presentation of the principle}
-The idea behind LSH is that we want to represent complex data (a lot of points described by high-dimensional vectors) in a more simple way. To achieve that, a finite number of indexes, smaller in memory than the original high-dimensional describers, are used to represent all points. This is a simple hash table ; the additional constraint is that close points should have the same index. In that way, obtaining reasonably close points from the query only requires retrieving points labeled with the same index, and find the closest among them, instead of searching the entire database. The approximation is due to the fact that there is a probability that two close points end up in different bins.
+\subsection{Principle}
+The idea behind LSH is to regroup points that are nearby in small buckets. Then, in each buckets, we can find the closest neighbors. Two points that are close by can fall on the other side of a bin, leading to errors. The main idea is to see that two points that are close will stay close when projected on many directions, but two points that are far apart will often stay that way when projected. We define $h^w_{a,b}$ to be the bin number for point $v$, whith a bin size of $w$, $b \sim \mathcal{U}([0,w])$ and $a \sim \mathcal{N}(0,1)$.
+$$h_{a,b}^w(v) = \lfloor \frac{ a \cdot v + b}{w} \rfloor$$
 
-An important requirement is that the hash function that maps each point to an index is fast to compute: typically, a scalar product is an efficient way to compute hash functions, and the obtained dot product can be discretized by taking the floor function. By taking a random vector, and computing the dot product of all data points with that vector, one can obtain a hash function. It can happen that remote points will end up with the same index. To reduce the probability that it happens, one can repeat the processus, and draw several random vectors. The number of projections should not be to high either, as in that case, all points would have different indices, and this would make the performance of approximate nearest neighbors decrease.
+This is fast to evaluate, and leads to a natural representation for a point that can be hashed easily. Finally, we use multiple projections and some pooling to balance between precision and recall.
 
+\subsection{Accuracy}
+As shown in [...], we can show that in an $L_2$ space, the probability for two point $p$ and $q$ at distance $u$ to be classified in the same bucket is 
+\begin{align*}
+  p^w(u) &= \int_0^w \frac{1}{u}\left( \frac{1}{\sqrt{2\pi}}\exp(-\frac{t^2}{2u^2})\right)\left(1-\frac{t}{w}\right)dt
+\end{align*}
+In the rest of the paper, we assume there exists a function $P^w:\mathcal{R}\mapsto [0,1]$ that represents the probability that two points will end up in the same bin in the final LSH implementation.
 
-\subsection{Control of the induced error}
+\section{Theory}
+\subsection{Strategy}
+Let $L^*$ and $\hat{L}$ be the normalized laplacians for the k-NN graph and approximate k-NN graph.
+$$\ell^* = (C^{-1}Q^* + I_n)^{-1}y \quad \hat{\ell} = (C^{-1}\hat{Q} + I_n)^{-1}y$$
+This leads to 
+$$ \mathbb{E}[\Arrowvert\ell^*-\hat{\ell}\Arrowvert_2] \leq \frac{\sqrt{n_l}}{c_u\gamma_g^2}\mathbb{E}[\Arrowvert(L^*-\hat{L})\Arrowvert_F]$$
+Controlling the error $\mathbb{E}[\Arrowvert(L^*-\hat{L})\Arrowvert_F]$ gives a direct control over the generalization error of this SSL algorithm. This control only needs to be $\mathcal{O}(1)$ to get a satisfying $\mathcal{O}(n^{-1/2})$ error term.
+
+\subsection{Controlling the frobenius norm}
+Let $x, y, z \in \mathcal{M}$, $x$ is our reference node, $y$ is its true closest neighbor, and $z$ is the closest neighbor returned by LSH (further away from $x$ than $y$). See figure~\ref{degeu} for a representation. Then we can write the expected error contribution to the frobenius norm (without normalizing the Laplacian):
+$$\mathbb{E}[\Arrowvert x-y\Arrowvert_2^2 + \Arrowvert x-z\Arrowvert_2^2] = \int_y \int_z (1-P^w(y))P^w(z)dydz$$
+Where the density of data points over $\mathcal{M}$ is hidden in the two differentials. This density, the diameter of the manifold, and the decay of $P^w$ will be heavily involved in bounding this term. The faster the decay, the smaller $(1-P^w(y))P^w(z)$ will be.
+\begin{figure}[ht!]
+ \centering
+ \includegraphics[width=0.45\textwidth]{figures/dessin_degeu.eps} 
+ \caption{Example situation in $2D$ with grid buckets. The closest neighbor should be $y$ but it's on the other side of the bucket's boundary, hence LSH will return $y$ as the closest neighbor.}
+ \label{degeu}
+\end{figure}
 
 \section{Experiments}
+
 \subsection{Presentation of the tinyImages and CIFAR100 dataset}
 To allow comparison with the LSH followed by HFS to Fergus algorithm, we have used similar data to evaluate the performance, i.e., we have used the Tiny Images Dataset, which is composed by around 80 million images, enriched with Gist descriptor for each image. We first applied a PCA to reduce the dimensions of the features to 32. then we considered only a subset of the images, labelled with CIFAR labels. We restricted ourselves to the CIFAR100 dataset, which consists in 100 different classes, each one represented by 600 images (500 for training and 100 for testing).
  
 \subsection{Testing setting}
-To evaluate the performance of algorithms, we have used a setting similar to the one used by Fergus et al. (citer fergus). $C=16$ classes are selected. For each of these classes, $t$ positive and $t$ negative points are labeled. This means that a total of $32t$ points are labeled. $t$ varies from 0 to 100. The rest of labels are unknown. A learning method (LSH+HFS or Fergus) is then applied to obtain the labels for the rest of the points. 300 points are then selected to measure the performances, for each class $c$: 100 with $c$ label, and 200 with a different label. From this, for each class, the precision at $15\%$ of recall is measured, and averaged on the $C$ classes. This final number is used as a performance score for the method for this number of labeled examples.
+To evaluate the performance of algorithms, we have used a setting similar to the one used by Fergus et al. (citer fergus). $C=16$ classes are selected. For each of these classes, $t$ positive and $2t$ negative points are labeled, which are reasonable proportions. $t$ varies from 0 to 100. The rest of labels are unknown. A learning method (LSH+HFS or Fergus) is then applied to obtain the labels for the rest of the points. $300$ points are then selected to measure the performances, for each class $c$: 100 with $c$ label, and 200 with a different label. From this, for each class, the precision at $15\%$ of recall is measured, and averaged on the $C$ classes. This final number is used as a performance score for the method for this number of labeled examples.
 
- 
+
 \subsection{Fergus algorithm as a baseline}
 To have a baseline comparison for the LSH+HFS method we are trying to apply, we have first attempted to reproduce results obtained with Fergus algorithm for the same testing setting (which is slightly different from ours, they have used a slightly less constrained selection of the classes, and have used 126 classes, instead of the 100 we have selected). Moreover, in the original experiment, they have kept the first 64 principal components, and us only 32 due to computational limitations. Results are presented in Figure \ref{variation}, along with the LSH+HFS results. We have kept the metrics and the results presentation from the original publication.
 
-
+\subsection{Investigating the frobenius norm difference}
+Since we couldn't get a theoretical bound in time, we decided to try to see how big the difference was, and how it evolved with different parameters. We expect to get a linear dependence in $k$ the number of neighbors, the error should decrease and the query time increase as the size of the bins increase. This implies a need to compromise between speed and accuracy. Since the error is heavily linked with the underlying manifold, we would suggest to run a few similar tests on each specific dataset before choosing adequate parameters for the LSH. Our results for CIFAR are shown in figure~\ref{figure_test_theoriques}.
 
 \subsection{Results}
 We have applied this setting to the method LSH+HFS. Due to computational limitations, we only used data points from 25 classes, and only $C=10$ classes were considered. We then explored a large panel of number of neighbors and number of projections for the process of building the graph from data. We obtained the following results:
@@ -89,6 +117,7 @@ We have applied this setting to the method LSH+HFS. Due to computational limitat
 \end{figure}
 
 We can see poor performance, barely better than random for low numbers of labeled points. Then, above 40 labeled positive points per class, performance increases significantly. We can assume that this lack of efficiency might be due to the reduction of the dataset, which certainly lowers the density of pointsand hence, the reliability of the ANN computation. This is also supported by the fact that values of parameters have little influence over performance.
+
 \section{Conclusion and future work}
 
 \end{document}
