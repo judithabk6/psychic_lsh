@@ -11,6 +11,6 @@ report/*.log
 report/*.aux
 *~
 *.mat
-
+*.backup
 
 

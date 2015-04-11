@@ -38,7 +38,7 @@ MVA student - ENS Cachan \\
 \maketitle
 
 \begin{abstract}
-Several very efficient solutions to achieve leaning tasks on graphs exist. The main challenge has become to obtain the graph. This is intractable as soon as the number of nodes reaches \textasciitilde 10.000. One way to go around this issue is to compute an approximation of the true graph using Locally Sensitive Hashing (LSH). We are interested in the task of classifying images. Due to the nature of dataset, we are in a semi-supervised learning setting, in which the key point is to leverage information from both labeled and unlabeled examples to perform classification of unlabeled points. Indeed, unlabled points can contribute information about the density and repartition of the data, and bring better knowledge of the properties of the graph and its laplacian.
+Several Semi-Supervised Learning algorithms make use of unlabeled examples to estimate a manifold through a discrete graph that represents it well. Building a complete and exact graph is a $O(n^2)$ operation, which is intractable for larger scale problems. A sensible way of dealing with this issue is to use approximate nearest neighbors search to find the edges of a k-NN (hence sparse) graph. Using Locally Sensitive Hashing will lead to some errors in the graph construction. This article is a study of how those errors will affect the generalization bound on the Harmonic Function Solution for label propagation on a graph. Practical results on the CIFAR dataset will complement those theoretical results.
 \end{abstract}
 
 
