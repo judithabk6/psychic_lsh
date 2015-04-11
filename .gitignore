@@ -2,6 +2,10 @@
 thrift/*
 *.graph
 data/*
+*.aux
+*.log
+*.synctex.gz
+report.pdf
 *~
 *.mat
 
