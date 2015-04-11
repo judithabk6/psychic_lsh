@@ -2,11 +2,10 @@
 clear; close all;
  
 %%% user parameters
-NUM_EVECS = 5; % how many eigenvectors/eigenfunctions to use
+NUM_EVECS = 256; % how many eigenvectors/eigenfunctions to use
 SIGMA = 0.2; % controls affinity in graph Laplacian
 n_labels = 100;
 
-%%
 load('data.mat');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,48 +28,51 @@ end;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set labelled / unlabelled
 
+n_classes = 16;
+recall = 0.15;
 
-y = zeros(n_nodes, n_labels);
 
-id_train = 1:n_nodes;
-id_test  = id_train(data(:,2)==0);
-id_train = id_train(data(:,2)==1);
+chosen_classes = randsample(1:n_labels,n_classes);
+ids = 1:n_nodes;
 
-labelled = id_train;
+n_run = 10;
+max_positive = 100;
+precision = zeros(n_run, max_positive);
 
-for i=labelled
-    y(i,data(i,3))=1;
-end;
-
-% build sparse diagonal Lambda matrix
-labelled = double(labelled);
-n_nodes = double(n_nodes);
-Lambda = sparse(labelled,labelled,1000*ones(size(labelled)),n_nodes, n_nodes);
-
-for i=labelled
-    Lambda(i,i) = 1000;
-end
-
- 
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Now try approximate eigenvectors, as found by eigenfunction approach
- 
-% compute approximate eigenvectors using eigenfunction approach
 [dd2,uu2] = eigenfunctions(positions,SIGMA,NUM_EVECS);
-disp('eigenfunctions found');
-alpha2=(dd2 +uu2'*Lambda*uu2)\(uu2'*Lambda*y);
+for run=1:n_run
+    run
+    for n_positive=1:max_positive
+        for class=chosen_classes
+            n_negative = (n_classes-1)*2*n_positive;
+            %chose test / train sets
+            ids_in = ids((data(:,3)==class) & (data(:,2)==1));
+            ids_out = ids((data(:,3)~=class) & (data(:,2)==1));
+            positive_examples = randsample(ids_in, n_positive);
+            negative_examples = randsample(ids_out, n_negative);
 
-size(alpha2)
+            ids_in_test = ids((data(:,3)==class) & (data(:,2)==0));
+            ids_out_test = ids((data(:,3)~=class) & (data(:,2)==0));
+            positive_test = randsample(ids_in_test, min(100, length(ids_in_test)));
+            negative_test = randsample(ids_out_test, 200);
+            to_rank= zeros(n_nodes, 1);
+            to_rank(positive_test)=1;
+            to_rank(negative_test)=-1;
 
-n_ok = 0;
-for i=id_test
-    [~, label_us] = max(alpha2(i,:));
-    if label_us == data(i,3)
-        n_ok = n_ok + 1;
+            %build y / lambda
+            y = zeros(n_nodes, 1);
+            y(positive_examples)=1;
+            y(negative_examples)=-1;
+            is_labelled = abs(y)>0;
+            Lambda = sparse(double(n_nodes), double(n_nodes));
+            for k=ids(is_labelled)
+                Lambda(k,k) = 50;
+            end;
+
+            % get results
+            result = get_results(y, Lambda, dd2, uu2, recall, to_rank);
+            precision(run, n_positive) =  precision(run, n_positive) + result;
+        end
+        precision(run, n_positive) = precision(run, n_positive)/n_classes;
     end
 end
-
-n_ok
-
- 
