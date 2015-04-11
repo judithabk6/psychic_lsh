@@ -38,7 +38,7 @@ MVA student - ENS Cachan \\
 \maketitle
 
 \begin{abstract}
-Several very efficient solutions to achieve leaning tasks on graphs exist. The main challenge has become to obtain the graph. This is intractable as soon as the number of nodes reaches \textasciitilde 10.000. One way to go around this issue is to compute an approximation of the true graph using Locally Sensitive Hashing (LSH). We are interested in the taks of classifying images. Due to the nature of dataset, we are in a semi-supervised learning setting 
+Several very efficient solutions to achieve leaning tasks on graphs exist. The main challenge has become to obtain the graph. This is intractable as soon as the number of nodes reaches \textasciitilde 10.000. One way to go around this issue is to compute an approximation of the true graph using Locally Sensitive Hashing (LSH). We are interested in the task of classifying images. Due to the nature of dataset, we are in a semi-supervised learning setting, in which the key point is to leverage information from both labeled and unlabeled examples to perform classification of unlabeled points. Indeed, unlabled points can contribute information about the density and repartition of the data, and bring better knowledge of the properties of the graph and its laplacian.
 \end{abstract}
 
 
@@ -74,17 +74,16 @@ To evaluate the performance of algorithms, we have used a setting similar to the
 
  
 \subsection{Fergus algorithm as a baseline}
-We have first tried to reproduce the results obtained by Fergus et al. (citer fergus), using their algorithm on this dataset. We have obtained sli
-
+To have a baseline comparison for the LSH+HFS method we are trying to apply, we have first attempted to reproduce results obtained with Fergus algorithm for the same testing setting (which is slightly different from ours, they have used a slightly less constrained selection of the classes, and have used 126 classes, instead of the 100 we have selected). Moreover, in the original experiment, they have kept the first 64 principal components, and us only 32 due to computational limitations. Results are presented in Figure \ref{variation}, along with the LSH+HFS results. We have kept the metrics and the results presentation from the original publication.
 
 
 
 \subsection{Results}
 We have applied this setting to the method LSH+HFS. Due to computational limitations, we only used data points from 25 classes, and only $C=10$ classes were considered. We then explored a large panel of number of neighbors and number of projections for the process of building the graph from data. We obtained the following results:
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=1.1\textwidth]{parameter_space_lsh.pdf}
+\begin{figure}[!h]
+\hspace{-3cm}
+\includegraphics[width=1.8\textwidth]{method_comp.pdf}
 \caption{Performance measures for different parameters}
 \label{variation}
 \end{figure}
