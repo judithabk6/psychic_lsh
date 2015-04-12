@@ -13,7 +13,7 @@
   \end{beamercolorbox}}%
   \vskip0pt%
 }
-
+\usepackage{subcaption}
 \defbeamertemplate*{footline}{split}
 {
 	\leavevmode%
@@ -41,6 +41,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{lmodern}
+\usepackage{color}
 \usepackage{multirow}
 \graphicspath{ {./figures/} }
 \author{Judith Abécassis, Timothée Lacroix}
@@ -57,7 +58,7 @@
 \usetikzlibrary{shapes,arrows,positioning}
 
 \begin{document}
-
+\graphicspath{{./../report/figures/}}
 \begin{frame}
 \titlepage
 \end{frame}
@@ -73,7 +74,7 @@
 \section{Challenge}
 \begin{frame}{Classify a lot of elements in a SSL context}
 
-		\begin{figure}[ht]
+		\begin{figure}
 			\centering
 			\includegraphics[width=\textwidth]{cifar-10.png}
 			\caption{Crowd}
@@ -108,26 +109,80 @@
 \end{frame}
 
 \begin{frame}{Empirical results on LSH accuracy}
+\begin{itemize}
+\item Instead of getting a theoretical bound, we have explored in a practical setting the error made by LSH
+\begin{figure}[!h]
+ \begin{subfigure}{0.27\textwidth}
+   \includegraphics[width=\textwidth]{time_binsize.eps}
+   \caption{Average time for a nearest neighbor query, as the number of bucket increases}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.27\textwidth}
+   \includegraphics[width=\textwidth]{error_binsize.eps}
+   \caption{Average normalized error for an approximated line of the Laplacian and an exact line, as the number of bucket increases}
+ \end{subfigure}\hfill
+ \centering
+ \begin{subfigure}{0.27\textwidth}
+   \includegraphics[width=\textwidth]{error_k.eps}
+   \caption{Average normalized error for an approximated line of the Laplacian and an exact line, as the number of neighbor increases}
+ \end{subfigure}
+
+\end{figure}
+\end{itemize}
+
 \end{frame}
 
 \section{Experiments}
 \begin{frame}{The tinyImage dataset and preprocessing steps}
+\begin{itemize}
+\item ~80 million unlabeled images
+\item CIFAR-100 labels: 10 classes with 600 labeled images in each
+\item enriched with GIST descriptors (384 dimensions)
+\item PCA on the 80M images: down to 32 dimensions
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Setting to assess performance}
+\begin{itemize}
+\item we consider $C$=10 random classes
+\item for each class, we select $t$ positive and $t$ negative (in one of the remaining $100-C$ classes, $t\in \{0, 1, 2, 3, 5, 8, 10, 16, 20, 40, 60, 100\}$. Those are labeled nodes from the training set.
+\item we compute the lerning step (by LSH+HFS or Fergus algorithm)
+\item we select 100 positive test images and 200 negative ones for each of the $C$ classes (unlabeled)
+\item we measure precision at 15 \% recall.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Problems with LSH and GRaphlab implementations}
+We have encountered several issued due to computation time while applying LSH+HFS method
+\begin{itemize}
+\item computation of the graph is long (~2600 sec)
+\item one propagation step is long too (~1100 sec)
+\end{itemize}
+We have adapted the setting to save some computation time
+\begin{itemize}
+\item only positive and neutral labels (0 and 1s), to allow doing one propagation for the $C$ classes and not $C$ propagation steps
+\item only consider the first 25 classes, and not 100 (otherwise it is even longer)
+\end{itemize}
+
+{\color{red}\textbf{Problem} results are no longer comparable to the Fergus baseline}
+
 \end{frame}
 
 \begin{frame}{Results}
+\begin{figure}
+  \includegraphics[width=\textwidth]{method_comp.pdf}
+\end{figure}
 \end{frame}
 
 \section{Conclusion}
 \begin{frame}{Conclusion}
+\begin{itemize}
+\item we have encourageing results on LSH performance
+\item computational limitations of current implementation prevent from proper testing of LSH+HFS methodology
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Future work}
+There are some variants of LSH method that learn hashing on data and could prove even more efficient.
 \end{frame}
 
 
