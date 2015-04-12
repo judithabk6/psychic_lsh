@@ -98,12 +98,21 @@
 \end{itemize}
 \end{frame}
 \section{Locality Sensitive Hashing}
-\begin{frame}{Presentation of the principle}
-\begin{itemize}
- \item Project points over a set of random directions, then quantize.
- \item Close points will stay close. Distant points will often stay distant.
- \item Sometimes two close neighbors will be on two sides of a boundary, leading to errors.
-\end{itemize}
+\begin{frame}{LSH principle}
+\begin{columns}[onlytextwidth]
+ \begin{column}{0.4\textwidth}
+  \begin{figure}
+    \includegraphics[width=0.75\textwidth]{spheres.eps}
+  \end{figure}
+ \end{column}
+ \begin{column}{0.6\textwidth}
+    \begin{itemize}
+      \item Project points over a set of random directions, then quantize.
+      \item Close points will stay close. Distant points will often stay distant.
+      \item Sometimes two close neighbors will be on two sides of a boundary, leading to errors.
+    \end{itemize}
+ \end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Speed vs Accuracy}
