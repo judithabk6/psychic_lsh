@@ -9,6 +9,11 @@ report/*.pdf
 report/*.out
 report/*.log
 report/*.aux
+presentation/*.pdf
+presentation/*.out
+presentation/*.log
+presentation/*.toc
+presentation/*.nav
 *~
 *.mat
 *.backup
