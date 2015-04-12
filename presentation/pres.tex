@@ -73,39 +73,67 @@
 
 \section{Challenge}
 \begin{frame}{Classify a lot of elements in a SSL context}
-
-		\begin{figure}
-			\centering
-			\includegraphics[width=\textwidth]{cifar-10.png}
-			\caption{Crowd}
-		\end{figure}
-
-
+  \begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{cifar-10.png}
+    \caption{Crowd}
+  \end{figure}
 \end{frame}
 
 \section{Semi-Supervised Learning Framework}
 \begin{frame}{Leverage information from unlabeled nodes in the graph}
-
+\begin{itemize}
+ \item Labelling data is costly
+ \item Unlabelled points can help us identify the underlying structure of the data
+ \item Graphs are natural discretization of manifolds
+ \item kNN / $\epsilon$ graph constructions lead to good estimate of the diffusion process over the manifold.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{The harmonic solution}
+\begin{itemize}
+ \item We want the labelling to be smooth over the manifold (hence over the graph).
+ \item Direct solution exists but doesn't scale
+ \item Can be computed iteratively with access to the Laplacian
+\end{itemize}
 \end{frame}
-
-\begin{frame}{Issues arise with the size of the graph}
-\end{frame}
-
 \section{Locality Sensitive Hashing}
 \begin{frame}{Presentation of the principle}
+\begin{itemize}
+ \item Project points over a set of random directions, then quantize.
+ \item Close points will stay close. Distant points will often stay distant.
+ \item Sometimes two close neighbors will be on two sides of a boundary, leading to errors.
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Accuracy}
+\begin{frame}{Speed vs Accuracy}
+\begin{itemize}
+ \item The query time grows linearly with the number of points / bin.
+ \item Errors become more frequent with smaller bins. 
+ \item We need to find a good compromise between speed and accuracy. Some methods auto-adapt their parameters.
+\end{itemize}
 \end{frame}
 
 \section{Theory}
-\begin{frame}{}
+\begin{frame}{Strategy}
+\begin{itemize}
+ \item Bounding $\Arrowvert L^*-\hat{L}\Arrowvert_F=\mathcal{O}(1)$ is enough to get an $O(n^{-1/2})$ term in the generalization bound.
+ \item We can use the guarantees from LSH :
+ $$p^w(u) = \int_0^w \frac{1}{u}\left( \frac{1}{\sqrt{2\pi}}\exp(-\frac{t^2}{2u^2})\right)\left(1-\frac{t}{w}\right)dt$$
+ \item For a node $x$, a real neighbor $y$ and a wrong neighbor $z$, we need to bound : 
+ $$\mathbb{E}[\Arrowvert x-y\Arrowvert_2^2 + \Arrowvert x-z\Arrowvert_2^2]$$
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}{Limitations to obtaining a bound for LSH}
+$$\mathbb{E}[\Arrowvert x-y\Arrowvert_2^2 + \Arrowvert x-z\Arrowvert_2^2] = \int_y \int_z (1-P^w(y))P^w(z)dydz$$
+This term depends on :
+\begin{itemize}
+ \item The underlying manifold $\mathcal{M}$ geometry
+ \item The rate of decay of our similarity measure
+ \item Density of points around $x$
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Empirical results on LSH accuracy}
@@ -151,7 +179,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Problems with LSH and GRaphlab implementations}
+\begin{frame}{Problems with LSH and Graphlab implementations}
 We have encountered several issued due to computation time while applying LSH+HFS method
 \begin{itemize}
 \item computation of the graph is long (~2600 sec)
@@ -176,13 +204,18 @@ We have adapted the setting to save some computation time
 \section{Conclusion}
 \begin{frame}{Conclusion}
 \begin{itemize}
-\item we have encourageing results on LSH performance
-\item computational limitations of current implementation prevent from proper testing of LSH+HFS methodology
+\item It seems plausible that the error term due to LSH is an $\mathcal{O}(n^{-1/2})$. But the bound is hard to obtain because of the many factors.
+\item Computational limitations of our current implementation prevented us from proper testing of LSH+HFS methodology
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Future work}
-There are some variants of LSH method that learn hashing on data and could prove even more efficient.
+\begin{itemize}
+ 
+ \item Find sensible simplifications to allow bounding of the error term
+ \item Check whether or not this error affect the underlying diffusion process estimation
+ \item Evaluate other data-aware LSH methods and adapt the bounds
+\end{itemize}
 \end{frame}
 
 
