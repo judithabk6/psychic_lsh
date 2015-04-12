@@ -55,7 +55,9 @@ Several Semi-Supervised Learning algorithms make use of unlabeled examples to es
 
 
 \section{Semi-Supervised Learning Framework}
+
 In this work, we are interested in semi-supervised learning (SSL) settings on a large number of points. The goal of SSL is to leverage a large number of unlabelled data points to estimate the underlying manifold geometry. We will call this manifold $\mathcal{M}$ in the rest of this work. Of our $n$ data points, we only have $n_l$ labelled points and $n_u$ unlabelled points. The goal is to propagate labels over the manifold.\\
+
 It is reasonable to assume that for a good feature space, the labelling function will be smooth over $\mathcal{M}$. This intuition leads us to consider Harmonic Function Solutions : 
 $$\ell^* = argmin_{\ell \in \mathcal{R}^n} (\ell-y)^TC(\ell-y) + \ell^TQ\ell$$
 Where $(\ell-y)^TC(\ell-y)$ ensures that labelled points are still well classified, and $\ell^TQ\ell$ is responsible for the smoothness of the solution over the graph. If data points are representative of $\mathcal{M}$, and the graph is well estimated, this should lead to a smooth solution over $\mathcal{M}$ as well. The fact that the graph Laplacian is a good estimator of the diffusion process over the manifold isn't trivial and has been studied (\cite{ting2011analysis}, \cite{hein2006graph}). In our case, \cite{ting2011analysis} showed the convergence of the k-NN solution under good assumptions.
@@ -66,7 +68,7 @@ Two problems arise when the problem grows in scale :
 \item Inverting the Laplacian matrix is around $\mathcal{O}(n^3)$.
 \end{itemize}
 
-We are interested here in a solution to the first problem, in the form of approximate nearest neighbors. The hope is that the error introduced in the graph by approximate neighborhood will be small enough.
+We are interested here in a solution to the first problem, in the form of approximate nearest neighbors. The hope is that the error introduced in the graph by approximate neighborhood will be small enough. The obtained graph is then used to compute the soft harmonic function (HFS) in an iterative way.
 
 Other attempts to address semi-supervised learning framework with a large number of nodes have been proposed. We have in particular considered the Fergus algorithm \cite{fergus2009semi} to compare to LSH. Fergus's idea is to estimate the density of points from available data. This estimated density can then be used in combination with results from the spectral graph theory to compute accurate numerical approximations to the eigenvectors and eigenfunctions of the normalized graph Laplacian and use these approximations to easily propagate labels through the whole graph.
 
