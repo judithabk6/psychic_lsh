@@ -50,15 +50,15 @@ MVA student - ENS Cachan \\
 \maketitle
 
 \begin{abstract}
-Several Semi-Supervised Learning algorithms make use of unlabeled examples to estimate a manifold through a discrete graph that represents it well. Building an exact graph is at least $\mathcal{O}(n^2)$ operation, which is intractable for larger scale problems. A sensible way of dealing with this issue is to use approximate nearest neighbors search to find the edges of a k-NN (hence sparse) graph. Using Locally Sensitive Hashing will lead to some errors in the graph construction. This article is a study of how those errors will affect the generalization bound on the Harmonic Function Solution for label propagation on a graph. Practical results on the CIFAR dataset will complement those theoretical results.
+Several Semi-Supervised Learning algorithms make use of unlabeled examples to estimate a manifold through a discrete graph that represents it well. Building an exact graph is at least $\mathcal{O}(n^2)$ operation, which is intractable for larger scale problems. A sensible way of dealing with this issue is to use approximate nearest neighbors search to find the edges of a k-NN (hence sparse) graph. Using Locally Sensitive Hashing will lead to some errors in the graph construction. This work is a study of how those errors will affect the generalization bound on the Harmonic Function Solution for label propagation on a graph. Practical results on the CIFAR dataset will complement those theoretical results.
 \end{abstract}
 
 
 \section{Semi-Supervised Learning Framework}
-In this work, we are interested in semi-supervised learning (SSL) settings on a large number of points. The goal of SSL is to leverage a large number of unlabelled data points to estimate the underlying manifold geometry. We will call this manifold $\mathcal{M}$ in the rest of this article. Of our $n$ data points, we only have $n_l$ labelled points and $n_u$ unlabelled points. The goal is to propagate labelsa over the manifold.\\
+In this work, we are interested in semi-supervised learning (SSL) settings on a large number of points. The goal of SSL is to leverage a large number of unlabelled data points to estimate the underlying manifold geometry. We will call this manifold $\mathcal{M}$ in the rest of this work. Of our $n$ data points, we only have $n_l$ labelled points and $n_u$ unlabelled points. The goal is to propagate labels over the manifold.\\
 It is reasonable to assume that for a good feature space, the labelling function will be smooth over $\mathcal{M}$. This intuition leads us to consider Harmonic Function Solutions : 
 $$\ell^* = argmin_{\ell \in \mathcal{R}^n} (\ell-y)^TC(\ell-y) + \ell^TQ\ell$$
-Where $(\ell-y)^TC(\ell-y)$ ensures that labelled points are still well classified, and $\ell^TQ\ell$ is responsible for the smoothness of the solution over the graph. If data points are representative of $\mathcal{M}$, and the graph is well estimated, this should lead to a smooth solution over $\mathcal{M}$ as well. 
+Where $(\ell-y)^TC(\ell-y)$ ensures that labelled points are still well classified, and $\ell^TQ\ell$ is responsible for the smoothness of the solution over the graph. If data points are representative of $\mathcal{M}$, and the graph is well estimated, this should lead to a smooth solution over $\mathcal{M}$ as well. The fact that the graph Laplacian is a good estimator of the diffusion process over the manifold isn't trivial and has been studied (\cite{ting2011analysis}, \cite{hein2006graph}). In our case, \cite{ting2011analysis} showed the convergence of the k-NN solution under good assumptions.
 
 Two problems arise when the problem grows in scale :
 \begin{itemize}
@@ -82,11 +82,11 @@ $$h_{a,b}^w(v) = \lfloor \frac{ a \cdot v + b}{w} \rfloor$$
 This is fast to evaluate, and leads to a natural representation for a point that can be hashed easily.  An important requirement is that the hash function that maps each point to an index is fast to compute: typically, a scalar product is an efficient way to compute hash functions, and the obtained dot product can be discretized by taking the floor function. By taking a random vector, and computing the dot product of all data points with that vector, one can obtain a hash function. It can happen that remote points will end up with the same index. To reduce the probability that it happens, one can repeat the process, and draw several random vectors. The number of projections should not be to high either, as in that case, all points would have different indices, and this would make the performance of approximate nearest neighbors decrease.
 
 \subsection{Accuracy}
-As shown in [...], we can show that in an $L_2$ space, the probability for two point $p$ and $q$ at distance $u$ to be classified in the same bucket is 
+As shown in \cite{slaney2008locality}, we can show that in an $L_2$ space, the probability for two point $p$ and $q$ at distance $u$ to be classified in the same bucket is 
 \begin{align*}
   p^w(u) &= \int_0^w \frac{1}{u}\left( \frac{1}{\sqrt{2\pi}}\exp(-\frac{t^2}{2u^2})\right)\left(1-\frac{t}{w}\right)dt
 \end{align*}
-In the rest of the paper, we assume there exists a function $P^w:\mathcal{R}\mapsto [0,1]$ that represents the probability that two points will end up in the same bin in the final LSH implementation.
+In the rest of this work, we assume there exists a function $P^w:\mathcal{R}\mapsto [0,1]$ that represents the probability that two points will end up in the same bin in the final LSH implementation.
 
 \section{Theory}
 \subsection{Strategy}
@@ -157,7 +157,8 @@ We have applied this setting to the method LSH+HFS. Due to computational limitat
 We can see poor performance, barely better than random for low numbers of labeled points. Then, above 40 labeled positive points per class, performance increases significantly. We can assume that this lack of efficiency might be due to the reduction of the dataset, which certainly lowers the density of points and hence, the reliability of the ANN computation. This is also supported by the fact that values of parameters have little influence over performance. 
 
 \subsection{Limitations of our experimental setting}
-To conduct experiments concerning LSH+HFS methods, we have used the existing implementation in Python, in the \texttt{Graphlab} and \texttt{Nearpy} packages. The algorithm was very slow to run (more than 6 hours on a reduced dataset containing only 15.000 points instead of the original 60.000). We believe that \texttt{Graphlab} omptimizations were efficient for even larger data, and might be suboptimal for smaller datasets. To only run the propagation step once, we have slightly modified the problem, and instead to have 1 for positive, -1 for negative and 0 for others, we have set 1 for positive, and 0 in any other case. For example, in the former case, if there are 10 different classes, and we consider $C=5$ classes, a labeled point could have label $[0, -1, 1, -1, 0, 0, 0, -1, 0, -1]$, and in the latter, the label would be $[0, 0, 1, 0, 0, 0, 0, 0, 0, 0]$. We believe that this modification has largely affected the results, since we're comparing precision of a multiclass problem training vs a simple decision problem training.
+To conduct experiments concerning LSH+HFS methods, we have used the existing implementation in Python, in the \texttt{Graphlab} and \texttt{Nearpy} packages. The algorithm was very slow to run (more than 6 hours on a reduced dataset containing only 15.000 points instead of the original 60.000). We believe that \texttt{Graphlab} omptimizations were efficient for even larger data, and might be suboptimal for smaller datasets. To only run the propagation step once, we have slightly modified the problem, and instead to have 1 for positive, -1 for negative and 0 for others, we have set 1 for positive, and 0 in any other case. For example, in the former case, if there are 10 different classes, and we consider $C=5$ classes, a labeled point could have label $[0, -1, 1, -1, 0, 0, 0, -1, 0, -1]$, and in the latter, the label would be $[0, 0, 1, 0, 0, 0, 0, 0, 0, 0]$. We believe that this modification has largely affected the results, since we're comparing precision of a multiclass problem training vs a simple 
+decision problem training.
 
 Another problem is also the necessity of reducing the dataset to only 25 classes, i.e. 15.000 nodes. We believe that such a downsampling has probably also affected importantly the performance of the algorithm.
 
