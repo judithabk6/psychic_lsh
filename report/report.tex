@@ -2,9 +2,20 @@
 \usepackage{nips14submit_e,times}
 \usepackage{hyperref}
 \usepackage{url}
-\usepackage{amsmath, amsfonts}
 \usepackage{graphicx}
-%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
+
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{amsmath, amssymb, amsthm, mathalfa}
+\usepackage{caption}
+\usepackage{geometry}
+\usepackage{thmbox}
+\usepackage{enumerate}
+\usepackage{subcaption}
+\usepackage{bbm}
 
 
 \title{SSL via Locally Sensitive Hashing (LSH)}
@@ -44,12 +55,12 @@ Several Semi-Supervised Learning algorithms make use of unlabeled examples to es
 
 
 \section{Semi-Supervised Learning Framework}
-In this work, we are interested in semi-supervised learning (SSL) settings on a large number of points. The goal of SSL is to leverage a large number of unlabelled data points to estimate the underlying manifold geometry. We will call this manifold $\mathcal{M}$ in the rest of this article. Of our $n$ data points, we only have $n_l$, growing slowly with $n$ labelled points and $n_u$ unlabelled points. The goal is to propagate labels over the manifold.\\
+In this work, we are interested in semi-supervised learning (SSL) settings on a large number of points. The goal of SSL is to leverage a large number of unlabelled data points to estimate the underlying manifold geometry. We will call this manifold $\mathcal{M}$ in the rest of this article. Of our $n$ data points, we only have $n_l$ labelled points and $n_u$ unlabelled points. The goal is to propagate labelsa over the manifold.\\
 It is reasonable to assume that for a good feature space, the labelling function will be smooth over $\mathcal{M}$. This intuition leads us to consider Harmonic Function Solutions : 
 $$\ell^* = argmin_{\ell \in \mathcal{R}^n} (\ell-y)^TC(\ell-y) + \ell^TQ\ell$$
 Where $(\ell-y)^TC(\ell-y)$ ensures that labelled points are still well classified, and $\ell^TQ\ell$ is responsible for the smoothness of the solution over the graph. If data points are representative of $\mathcal{M}$, and the graph is well estimated, this should lead to a smooth solution over $\mathcal{M}$ as well. 
 
-Two problem arises when the problem grows in scale :
+Two problems arise when the problem grows in scale :
 \begin{itemize}
 \item Constructing the graph itself requires $\mathcal{O}(n^2)$ distance comparisons,
 \item Inverting the Laplacian matrix is around $\mathcal{O}(n^3)$.
@@ -93,28 +104,50 @@ Where the density of data points over $\mathcal{M}$ is hidden in the two differe
 
 \section{Experiments}
 
+\subsection{Investigating the frobenius norm difference}
+Since we couldn't get a theoretical bound in time, we decided to try to see how big the difference was, and how it evolved with different parameters. We expect to get a linear dependence in $k$ the number of neighbors. The error should decrease and the query time increase as the number of bucket increases (since this leads to smaller bins, hence more boundary issues, but less neighbors in each bin). This implies a need to compromise between speed and accuracy. Since the error is heavily linked with the underlying manifold, we would suggest to run a few similar tests on each specific dataset before choosing adequate parameters for the LSH. Our results for CIFAR are shown in figure~\ref{figure_test_theoriques}.
+
+\begin{figure}[!ht]
+ \begin{subfigure}{0.43\textwidth}
+   \includegraphics[width=\textwidth]{figures/time_binsize.eps}
+   \caption{Average time for a nearest neighbor query, as the number of bucket increases}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.43\textwidth}
+   \includegraphics[width=\textwidth]{figures/error_binsize.eps}
+   \caption{Average normalized error for an approximated line of the Laplacian and an exact line, as the number of bucket increases}
+ \end{subfigure}\hfill
+ \centering
+ \begin{subfigure}{0.43\textwidth}
+   \includegraphics[width=\textwidth]{figures/error_k.eps}
+   \caption{Average normalized error for an approximated line of the Laplacian and an exact line, as the number of neighbor increases}
+ \end{subfigure}\hfill
+ \caption{Some metrics on the error contribution of LSH on the CIFAR dataset}
+ \label{figure_test_theoriques}
+\end{figure}
+
+
 \subsection{Presentation of the tinyImages and CIFAR100 dataset}
 To allow comparison with the LSH followed by HFS to Fergus algorithm, we have used similar data to evaluate the performance, i.e., we have used the Tiny Images Dataset, which is composed by around 80 million images, enriched with Gist descriptor for each image. We first applied a PCA to reduce the dimensions of the features to 32. then we considered only a subset of the images, labelled with CIFAR labels. We restricted ourselves to the CIFAR100 dataset, which consists in 100 different classes, each one represented by 600 images (500 for training and 100 for testing).
  
 \subsection{Testing setting}
-To evaluate the performance of algorithms, we have used a setting similar to the one used by Fergus et al. (citer fergus). $C=16$ classes are selected. For each of these classes, $t$ positive and $2t$ negative points are labeled, which are reasonable proportions. $t$ varies from 0 to 100. The rest of labels are unknown. A learning method (LSH+HFS or Fergus) is then applied to obtain the labels for the rest of the points. $300$ points are then selected to measure the performances, for each class $c$: 100 with $c$ label, and 200 with a different label. From this, for each class, the precision at $15\%$ of recall is measured, and averaged on the $C$ classes. This final number is used as a performance score for the method for this number of labeled examples.
+To evaluate the performance of algorithms, we have used a setting similar to the one used by Fergus et al. (citer fergus). $C=16$ classes are selected. For each of these classes, $t$ positive and $2t$ negative points are labeled for each other classes. $t$ varies from 0 to 100. The rest of labels are unknown. A learning method (LSH+HFS or Fergus) is then applied to obtain the labels for the rest of the points. $300$ points are then selected to measure the performances, for each class $c$: 100 with $c$ label, and 200 with a different label. From this, for each class, the precision at $15\%$ of recall is measured, and averaged on the $C$ classes. This final number is used as a performance score for the method for this number of labeled examples.
 
 
 \subsection{Fergus algorithm as a baseline}
-To have a baseline comparison for the LSH+HFS method we are trying to apply, we have first attempted to reproduce results obtained with Fergus algorithm for the same testing setting (which is slightly different from ours, they have used a slightly less constrained selection of the classes, and have used 126 classes, instead of the 100 we have selected). Moreover, in the original experiment, they have kept the first 64 principal components, and us only 32 due to computational limitations. Results are presented in Figure \ref{variation}, along with the LSH+HFS results. We have kept the metrics and the results presentation from the original publication.
+To have a baseline comparison for the LSH+HFS method we are trying to apply, we have first attempted to reproduce results obtained with Fergus algorithm for the same testing setting (which is slightly different from ours, they have used a slightly less constrained selection of the classes, and have used 126 classes, instead of the 100 we have selected). Moreover, in the original experiment, they have kept the first 64 principal components, and us only 32 due 
+to computational limitations. Results are presented in Figure \ref{variation}, along with the LSH+HFS results. We have kept the metrics and the results presentation from the original publication.
 
-\subsection{Investigating the frobenius norm difference}
-Since we couldn't get a theoretical bound in time, we decided to try to see how big the difference was, and how it evolved with different parameters. We expect to get a linear dependence in $k$ the number of neighbors, the error should decrease and the query time increase as the size of the bins increase. This implies a need to compromise between speed and accuracy. Since the error is heavily linked with the underlying manifold, we would suggest to run a few similar tests on each specific dataset before choosing adequate parameters for the LSH. Our results for CIFAR are shown in figure~\ref{figure_test_theoriques}.
+\begin{figure}[!h]
+  \hspace{-3cm}
+  \includegraphics[width=1.8\textwidth]{method_comp.pdf}
+  \caption{Performance measures for different parameters}
+  \label{variation}
+\end{figure}
 
 \subsection{Results}
 We have applied this setting to the method LSH+HFS. Due to computational limitations, we only used data points from 25 classes, and only $C=10$ classes were considered. We then explored a large panel of number of neighbors and number of projections for the process of building the graph from data. We obtained the following results:
 
-\begin{figure}[!h]
-\hspace{-3cm}
-\includegraphics[width=1.8\textwidth]{method_comp.pdf}
-\caption{Performance measures for different parameters}
-\label{variation}
-\end{figure}
+
 
 We can see poor performance, barely better than random for low numbers of labeled points. Then, above 40 labeled positive points per class, performance increases significantly. We can assume that this lack of efficiency might be due to the reduction of the dataset, which certainly lowers the density of pointsand hence, the reliability of the ANN computation. This is also supported by the fact that values of parameters have little influence over performance.
 
