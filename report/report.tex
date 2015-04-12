@@ -4,6 +4,7 @@
 \usepackage{url}
 \usepackage{amsmath, amsfonts}
 \usepackage{graphicx}
+\bibliographystyle{plain}
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
 
 
@@ -57,13 +58,18 @@ Two problem arises when the problem grows in scale :
 
 We are interested here in a solution to the first problem, in the form of approximate nearest neighbors. The hope is that the error introduced in the graph by approximate neighborhood will be small enough.
 
+Other attempts to address semi-supervised learning framework with a large number of nodes have been proposed. We have in particular considered the Fergus algorithm \cite{fergus2009semi} to compare to LSH. Fergus's idea is to estimate the density of points from available data. This estimated density can then be used in combination with results from the spectral graph theory to compute accurate numerical approximations to the eigenvectors and eigenfunctions of the normalized graph Laplacian and use these approximations to easily propagate labels through the whole graph.
+
 
 \section{Locality Sensitive Hashing}
 \subsection{Principle}
-The idea behind LSH is to regroup points that are nearby in small buckets. Then, in each buckets, we can find the closest neighbors. Two points that are close by can fall on the other side of a bin, leading to errors. The main idea is to see that two points that are close will stay close when projected on many directions, but two points that are far apart will often stay that way when projected. We define $h^w_{a,b}$ to be the bin number for point $v$, whith a bin size of $w$, $b \sim \mathcal{U}([0,w])$ and $a \sim \mathcal{N}(0,1)$.
+
+The idea behind LSH is that we want to represent complex data (a lot of points described by high-dimensional vectors) in a more simple way. To achieve that, a finite number of indexes, smaller in memory than the original high-dimensional describers, are used to represent all points. This is a simple hash table ; the additional constraint is that close points should have the same index. In that way, obtaining reasonably close points from the query only requires retrieving points labeled with the same index, and find the closest among them, instead of searching the entire database. The approximation is due to the fact that there is a probability that two close points end up in different bins.
+
+LSH attempts to regroup points that are nearby in small buckets. Then, in each buckets, we can find the closest neighbors. Two points that are close by can fall on the other side of a bin, leading to errors. The main idea is to see that two points that are close will stay close when projected on many directions, but two points that are far apart will often stay that way when projected. We define $h^w_{a,b}$ to be the bin number for point $v$, whith a bin size of $w$, $b \sim \mathcal{U}([0,w])$ and $a \sim \mathcal{N}(0,1)$.
 $$h_{a,b}^w(v) = \lfloor \frac{ a \cdot v + b}{w} \rfloor$$
 
-This is fast to evaluate, and leads to a natural representation for a point that can be hashed easily. Finally, we use multiple projections and some pooling to balance between precision and recall.
+This is fast to evaluate, and leads to a natural representation for a point that can be hashed easily.  An important requirement is that the hash function that maps each point to an index is fast to compute: typically, a scalar product is an efficient way to compute hash functions, and the obtained dot product can be discretized by taking the floor function. By taking a random vector, and computing the dot product of all data points with that vector, one can obtain a hash function. It can happen that remote points will end up with the same index. To reduce the probability that it happens, one can repeat the processus, and draw several random vectors. The number of projections should not be to high either, as in that case, all points would have different indices, and this would make the performance of approximate nearest neighbors decrease.
 
 \subsection{Accuracy}
 As shown in [...], we can show that in an $L_2$ space, the probability for two point $p$ and $q$ at distance $u$ to be classified in the same bucket is 
@@ -116,8 +122,22 @@ We have applied this setting to the method LSH+HFS. Due to computational limitat
 \label{variation}
 \end{figure}
 
-We can see poor performance, barely better than random for low numbers of labeled points. Then, above 40 labeled positive points per class, performance increases significantly. We can assume that this lack of efficiency might be due to the reduction of the dataset, which certainly lowers the density of pointsand hence, the reliability of the ANN computation. This is also supported by the fact that values of parameters have little influence over performance.
+We can see poor performance, barely better than random for low numbers of labeled points. Then, above 40 labeled positive points per class, performance increases significantly. We can assume that this lack of efficiency might be due to the reduction of the dataset, which certainly lowers the density of points and hence, the reliability of the ANN computation. This is also supported by the fact that values of parameters have little influence over performance. 
+
+\subsection{Limitations of our experimental setting}
+To conduct experiments concerning LSH+HFS methods, we have used the existing implementation in Python, in the \texttt{Graphlab} and \texttt{Nearpy} packages. The algorithm was very slow to run (more than 6 hours on a reduced dataset containing only 15.000 points instead of the original 60.000). We believe that \texttt{Graphlab} omptimizations were efficient for even larger data, and might be suboptimal for smaller datasets. To only run the propagation step once, we have slightly modified the problem, and instead to have 1 for positive, -1 for negative and 0 for others, we have set 1 for positive, and 0 in any other case. For example, in the former case, if there are 10 different classes, and we consider $C=5$ classes, a labeled point could have label $[0, -1, 1, -1, 0, 0, 0, -1, 0, -1]$, and in the latter, the label would be $[0, 0, 1, 0, 0, 0, 0, 0, 0, 0]$. We believe that this modification has largely affected the results, and might be (at least partly) responsible for the poor performance of LSH+HFS method.
+
+Another problem is also the necessity of reducing the dataset to only 25 classes, i.e. 15.000 nodes. We believe that such a downsampling has probably also affected importantly the performance of the algorithm.
 
 \section{Conclusion and future work}
 
+In this project, we have tried to evaluate the performance of the LSH+HFS method applied to the SSL learning setting, both from the theoretical point of view by bounding the error due to the approximation, and from a practical point of view by evaluating the classification performance on a real dataset.
+
+The theoretical part is really complex and many factors intervene, such as ....
+
+The practical part has also been quite challenging, due to the fact that the implementation we used has a very high computation time, and prevented us from testing properly the algorithm. However, with the partial results we have, it seems that performance is quite satisfying considering the downsampling.
+
+Finally, to complete the present work, it could be necessary to implement a new framework, instad of using the \texttt{Graphlab} framework. Future developement and refinement of the current method could be achieved by using variants of the LSH, such as \cite{andoni2015optimal, andoni2014beyond} that consider adapting the hashing function to the data, which could improve performance. 
+
+\bibliography{biblio}
 \end{document}
